@@ -1,6 +1,11 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
 	devtools: { enabled: true },
+	modules: ['nuxt-icon'],
+	runtimeConfig: {
+		public: {
+			DOMAIN: process.env.DOMAIN ?? 'https://127.0.0.1:3000/',
+		},
+	},
 	alias: {
 		assets: '/<rootDir>/assets',
 	},
@@ -9,7 +14,7 @@ export default defineNuxtConfig({
 			htmlAttrs: {
 				lang: 'en',
 			},
-			title: '',
+			title: 'Razmik Matinyan • Developer | razmatinyan.com',
 			charset: 'utf-8',
 			viewport: 'width=device-width, initial-scale=1.0',
 			meta: [
@@ -44,4 +49,5 @@ export default defineNuxtConfig({
 			link: [{ rel: 'icon', type: 'image/x-icon', href: '' }],
 		},
 	},
+	css: ['~/assets/fonts.css', '~/assets/main.css'],
 });

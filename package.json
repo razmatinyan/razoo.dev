@@ -1,5 +1,5 @@
 {
-  "name": "nuxt-app",
+  "name": "razoo.dev",
   "private": true,
   "scripts": {
     "build": "nuxt build",
@@ -10,6 +10,11 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
-    "nuxt": "^3.7.3"
+    "nuxt": "^3.7.3",
+    "nuxt-icon": "^0.5.0"
+  },
+  "dependencies": {
+    "gsap": "^3.12.2",
+    "locomotive-scroll": "^5.0.0-beta.8"
   }
 }
