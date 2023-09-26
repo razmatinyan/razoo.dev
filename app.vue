@@ -9,7 +9,7 @@
 	</NuxtLayout>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import '../locomotive-scroll/dist/locomotive-scroll.css';
 import gsap from 'gsap';
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -18,30 +18,31 @@ gsap.config({
   	nullTargetWarn: false,
 });
 
-const cursor = ref('');
+const cursor: Ref = ref<HTMLDivElement | null>(null);
 const speed = 5;
 let posX = 0;
 let posY = 0;
 let mouseX = 0;
 let mouseY = 0;
 
-const mouseMoveHandler = (e) => {
+const mouseMoveHandler = (e: MouseEvent) => {
 	mouseX = e.clientX;
 	mouseY = e.clientY;
 }
 
-const mouseEnterHandler = (e) => {
+const mouseEnterHandler = (e: MouseEvent) => {
 	cursor.value.classList.remove('hide');
 }
 
-const mouseLeaveHandler = (e) => {
+const mouseLeaveHandler = (e: MouseEvent) => {
 	cursor.value.classList.add('hide');
 }
 
 onMounted(() => {
 	const { locomotive } = useNuxtApp();
-	
-	if (!"ontouchstart" in window || !navigator.msMaxTouchPoints) {
+
+	// @ts-ignore
+	if (!"ontouchstart" in window || !navigator.MaxTouchPoints) {
 		document.addEventListener('mouseenter', mouseEnterHandler);
 		document.addEventListener('mouseleave', mouseLeaveHandler);
 		window.addEventListener('mousemove', mouseMoveHandler);
@@ -63,7 +64,8 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-	if (!"ontouchstart" in window || !navigator.msMaxTouchPoints) {
+	// @ts-ignore
+	if (!"ontouchstart" in window || !navigator.MaxTouchPoints) {
 		document.removeEventListener('mouseenter', mouseEnterHandler);
 		document.removeEventListener('mouseleave', mouseLeaveHandler);
 		window.removeEventListener('mousemove', mouseMoveHandler);
