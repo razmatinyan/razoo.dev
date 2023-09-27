@@ -1,6 +1,5 @@
 export default defineNuxtConfig({
 	devtools: { enabled: true },
-	modules: ['nuxt-icon'],
 	runtimeConfig: {
 		public: {
 			DOMAIN: process.env.DOMAIN ?? 'https://127.0.0.1:3000/',
@@ -50,4 +49,8 @@ export default defineNuxtConfig({
 		},
 	},
 	css: ['~/assets/fonts.css', '~/assets/main.css'],
+	modules: ['nuxt-icon', '@nuxt/image'],
+	image: {
+		dir: 'public/images'
+	}
 });

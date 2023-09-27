@@ -19,30 +19,27 @@ gsap.config({
 });
 
 const cursor: Ref = ref<HTMLDivElement | null>(null);
-const speed = 5;
-let posX = 0;
-let posY = 0;
-let mouseX = 0;
-let mouseY = 0;
+const speed: number = 5;
+let posX: number = 0;
+let posY: number = 0;
+let mouseX: number = 0;
+let mouseY: number = 0;
 
-const mouseMoveHandler = (e: MouseEvent) => {
+const mouseMoveHandler = (e: MouseEvent): void => {
 	mouseX = e.clientX;
 	mouseY = e.clientY;
 }
 
-const mouseEnterHandler = (e: MouseEvent) => {
+const mouseEnterHandler = (e: MouseEvent): void => {
 	cursor.value.classList.remove('hide');
 }
 
-const mouseLeaveHandler = (e: MouseEvent) => {
+const mouseLeaveHandler = (e: MouseEvent): void => {
 	cursor.value.classList.add('hide');
 }
 
 onMounted(() => {
-	const { locomotive } = useNuxtApp();
-
-	// @ts-ignore
-	if (!"ontouchstart" in window || !navigator.MaxTouchPoints) {
+	if (!window.ontouchstart && navigator.maxTouchPoints === 0) {
 		document.addEventListener('mouseenter', mouseEnterHandler);
 		document.addEventListener('mouseleave', mouseLeaveHandler);
 		window.addEventListener('mousemove', mouseMoveHandler);
@@ -64,8 +61,7 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-	// @ts-ignore
-	if (!"ontouchstart" in window || !navigator.MaxTouchPoints) {
+	if (!window.ontouchstart && navigator.maxTouchPoints === 0) {
 		document.removeEventListener('mouseenter', mouseEnterHandler);
 		document.removeEventListener('mouseleave', mouseLeaveHandler);
 		window.removeEventListener('mousemove', mouseMoveHandler);
