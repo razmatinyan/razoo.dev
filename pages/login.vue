@@ -7,17 +7,19 @@
             class="container container-sm"
         >
             <UIInput
+                id="email"
                 type="email"
                 placeholder="Email"
-                autocomplete="off"
+                autocomplete="new-password"
                 required="true"
                 :model-value="email"
                 @update:model-value="newValue => email = newValue"
             />
             <UIInput
+                id="password"
                 type="password"
                 placeholder="Password"
-                autocomplete="off"
+                autocomplete="new-password"
                 required="true"
                 :model-value="password"
                 @update:model-value="newValue => password = newValue"
@@ -43,7 +45,7 @@ const client = useSupabaseClient();
 const login = async (): Promise<void> => {
     btnDisabled.value = true;
     errorMsg.value = '';
-	const { data, error } = await client.auth.signInWithPassword({
+	const { error } = await client.auth.signInWithPassword({
 		email: email.value,
 		password: password.value,
 	});

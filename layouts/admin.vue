@@ -1,5 +1,5 @@
 <template>
-    <div id="__admin">
+    <div id="__layout">
         <header id="header">
             <div class="icon-wrapper">
                 <NuxtLink to="/admin">
@@ -31,6 +31,9 @@ watchEffect(() => {
 </script>
 
 <style scoped>
+#__layout {
+    will-change: opacity;
+}
 #content {
     padding-top: 120px;
     min-height: 100vh;
@@ -52,6 +55,7 @@ watchEffect(() => {
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, .25);
     z-index: 10;
+    user-select: none;
 }
 .icon {
     display: block;
@@ -73,7 +77,7 @@ watchEffect(() => {
     font-size: 1rem;
     letter-spacing: 0.95px;
     border-radius: 10px;
-    transition: var(--smooth);
+    transition: background var(--smooth);
 }
 .action.ghosted {
     background: rgba(255, 255, 255, 0.1);
