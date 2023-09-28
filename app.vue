@@ -44,7 +44,8 @@ onMounted(() => {
 		document.addEventListener('mouseleave', mouseLeaveHandler);
 		window.addEventListener('mousemove', mouseMoveHandler);
 
-		gsap.to({}, 0.01, {
+		gsap.to({}, {
+			duration: 0.01,
 			repeat: -1,
 			onRepeat: function () {
 				posX += (mouseX - posX) / speed;
@@ -79,7 +80,7 @@ onBeforeUnmount(() => {
     width: 100%;
     height: 100%;
     opacity: 8%;
-    background-image: url(../images/noise.png);
+    background-image: url(@/images/noise.png);
     background-repeat: repeat;
     z-index: 9997;
 	user-select: none;

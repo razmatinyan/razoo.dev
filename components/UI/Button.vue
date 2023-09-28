@@ -1,11 +1,11 @@
 <template>
-	<button class="btn">
+	<button class="ui-btn">
 		<slot />
 	</button>
 </template>
 
 <style scoped>
-.btn {
+.ui-btn {
 	position: relative;
 	overflow: hidden;
 	display: inline-flex;
@@ -14,6 +14,7 @@
 	height: 3rem;
 	padding: 0 3rem;
 	font-size: 1.1rem;
+	letter-spacing: 0.95px;
 	border: 0;
 	border-radius: .2rem;
 	background: var(--primary);
@@ -21,8 +22,11 @@
 	outline: none;
 	transition: var(--smooth);
 }
-.btn:hover {
+.ui-btn:hover {
 	background: var(--primary-hover);
+}
+.full-width {
+	width: 100%;
 }
 
 .corner {
@@ -31,8 +35,8 @@
 .full-corner {
 	border-radius: 5rem;
 }
+[disabled] {
+	background: var(--primary-dark);
+	cursor: not-allowed;
+}
 </style>
-
-<script setup>
-
-</script>

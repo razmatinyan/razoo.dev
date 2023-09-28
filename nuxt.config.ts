@@ -49,8 +49,11 @@ export default defineNuxtConfig({
 		},
 	},
 	css: ['~/assets/fonts.css', '~/assets/main.css'],
-	modules: ['nuxt-icon', '@nuxt/image'],
+	modules: ['nuxt-icon', '@nuxt/image', '@nuxtjs/supabase'],
 	image: {
 		dir: 'public/images'
-	}
+	},
+	supabase: {
+		redirect: false,
+	},
 });
