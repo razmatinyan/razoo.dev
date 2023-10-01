@@ -1,17 +1,17 @@
 <template>
-	<input
-		:type="type"
+	<textarea
 		:placeholder="placeholder"
 		:value="modelValue"
+		:rows="5"
 		@input="$emit('update:modelValue', ($event as InputEvent).target.value)"
-		class="ui ui-input"
+		class="ui ui-textarea"
 	/>
 </template>
 
 <script setup lang="ts">
-interface InputType {
-	type: string;
-	modelValue?: string | number;
+interface TextareaType {
+	rows?: number;
+	modelValue?: string;
 	placeholder?: string;
 }
 
@@ -19,6 +19,6 @@ interface InputEvent extends Event {
 	target: HTMLInputElement;
 }
 
-defineProps<InputType>();
+defineProps<TextareaType>();
 defineEmits(['update:modelValue']);
 </script>

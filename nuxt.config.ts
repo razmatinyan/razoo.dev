@@ -1,5 +1,8 @@
 export default defineNuxtConfig({
 	devtools: { enabled: true },
+	typescript: {
+		shim: false,
+	},
 	runtimeConfig: {
 		public: {
 			DOMAIN: process.env.DOMAIN ?? 'https://127.0.0.1:3000/',
@@ -30,11 +33,21 @@ export default defineNuxtConfig({
 		},
 	},
 	css: ['~/assets/fonts.css', '~/assets/main.css'],
-	modules: ['nuxt-icon', '@nuxt/image', '@nuxtjs/supabase'],
+	modules: ['@nuxtjs/google-fonts', 'nuxt-icon', '@nuxt/image', '@nuxtjs/supabase'],
 	image: {
 		dir: 'public/images',
 	},
 	supabase: {
 		redirect: false,
+		cookieOptions: {
+			maxAge: 86400,
+		},
+	},
+	googleFonts: {
+		families: {
+			Inter: [400, 700],
+		},
+		display: 'swap',
+		useStylesheet: true,
 	},
 });
