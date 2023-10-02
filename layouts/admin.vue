@@ -66,10 +66,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-#__layout {
-	will-change: opacity;
-}
-
 #content {
 	padding-top: 145px;
 	min-height: 100vh;
@@ -136,10 +132,10 @@ onMounted(() => {
 	visibility: visible;
 }
 .loader-enter-active {
-	transition: all 0.2s cubic-bezier(0.7, 0, 0.3, 1);
+	transition: var(--smooth);
 }
 .loader-leave-active {
-	transition: all 0.2s cubic-bezier(0.7, 0, 0.3, 1);
+	transition: var(--smooth);
 }
 .loader-leave-to {
 	opacity: 0;

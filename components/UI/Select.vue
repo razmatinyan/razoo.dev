@@ -5,13 +5,13 @@
 			@click="showOptions = !showOptions"
 			:class="{ opened: showOptions }"
 		>
-			<div class="c-sel-label" :class="{ placeholderText: !selected }">
+			<div class="label" :class="{ placeholderText: !selected }">
 				{{ !selected ? placeholder : selected }}
 			</div>
 			<Icon class="sel-icon" name="heroicons:chevron-down-20-solid" color="white" />
 		</div>
-		<transition name="scale" appear>
-			<div class="options" v-if="showOptions">
+		<transition name="scale" @enter="onEnter" appear>
+			<div ref="dropdown" class="options" v-if="showOptions">
 				<span
 					v-for="option in options"
 					:key="option"
@@ -35,7 +35,7 @@
 <script setup lang="ts">
 interface SelectProps {
 	options: string[] | number[];
-	placeholder?: string | number | 'Choose an option';
+	placeholder?: string | number;
 	selected?: string | number | null;
 }
 
@@ -46,6 +46,7 @@ const emit = defineEmits<{
 defineProps<SelectProps>();
 
 const showOptions: Ref = ref<boolean>(false);
+const dropdown: Ref = ref<HTMLDivElement | null>(null);
 
 function selectOption(option: string | number): void {
 	emit('select', option);
@@ -55,6 +56,12 @@ function selectOption(option: string | number): void {
 function clickOutside() {
 	if (showOptions.value === true) {
 		showOptions.value = false;
+	}
+}
+
+function onEnter(): void {
+	if (showOptions.value === true) {
+		console.log(dropdown.value?.getBoundingClientRect());
 	}
 }
 </script>
@@ -73,13 +80,13 @@ function clickOutside() {
 .select {
 	position: relative;
 }
-.ui-select > .c-sel-label {
+.ui-select > .label {
 	display: flex;
 	align-items: center;
 	height: 100%;
 }
 
-.ui-select > .c-sel-label.placeholderText {
+.ui-select > .label.placeholderText {
 	color: #767676;
 }
 .ui-select > .sel-icon {

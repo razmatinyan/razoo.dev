@@ -2,6 +2,7 @@ export default defineNuxtConfig({
 	devtools: { enabled: true },
 	typescript: {
 		shim: false,
+		typeCheck: true,
 	},
 	runtimeConfig: {
 		public: {
