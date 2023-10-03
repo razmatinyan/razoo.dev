@@ -10,8 +10,8 @@
 			</div>
 			<Icon class="sel-icon" name="heroicons:chevron-down-20-solid" color="white" />
 		</div>
-		<transition name="scale" @enter="onEnter" appear>
-			<div ref="dropdown" class="options" v-if="showOptions">
+		<transition name="scale" appear>
+			<div class="options" v-if="showOptions">
 				<span
 					v-for="option in options"
 					:key="option"
@@ -46,7 +46,6 @@ const emit = defineEmits<{
 defineProps<SelectProps>();
 
 const showOptions: Ref = ref<boolean>(false);
-const dropdown: Ref = ref<HTMLDivElement | null>(null);
 
 function selectOption(option: string | number): void {
 	emit('select', option);
@@ -56,12 +55,6 @@ function selectOption(option: string | number): void {
 function clickOutside() {
 	if (showOptions.value === true) {
 		showOptions.value = false;
-	}
-}
-
-function onEnter(): void {
-	if (showOptions.value === true) {
-		console.log(dropdown.value?.getBoundingClientRect());
 	}
 }
 </script>
