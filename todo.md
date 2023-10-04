@@ -1,3 +1,3 @@
-## Write function which will calculate going element out of screen and fix it. --> getBoundingClientRect()
+## Add checkboxes for techStack field. Chunk them into array if needed. Frontend, Backend
 
 ## Fix the issue with types in .vue files

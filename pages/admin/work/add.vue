@@ -43,6 +43,9 @@
 				@select="form.madeWith = $event"
 			/>
 		</div>
+		<div class="form-row columns-3">
+			<!-- <UICheckbox v-model="form.techStack" value="Nuxt 3" label="Nuxt 3" /> -->
+		</div>
 	</form>
 </template>
 
@@ -61,15 +64,24 @@ interface Work {
 	title: string;
 	siteUrl: string;
 	description?: string;
-	year?: number;
-	madeWith?: string | number;
-	techStack: string;
+	year?: string | number;
+	madeWith?: string;
+	techStack: [];
 	coverImage: string;
 	allImages: ProjectImages[];
 }
 
 const madeWithOptions: Array<string> = ['Solo', 'Teamwork'];
-const form = reactive({} as Work);
+const form: Work = reactive({
+	title: '',
+	siteUrl: '',
+	description: '',
+	year: '',
+	madeWith: '',
+	techStack: [],
+	coverImage: '',
+	allImages: [],
+});
 </script>
 
 <style scoped>

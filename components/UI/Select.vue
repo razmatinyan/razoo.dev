@@ -11,7 +11,7 @@
 			<Icon class="sel-icon" name="heroicons:chevron-down-20-solid" color="white" />
 		</div>
 		<transition name="scale" appear>
-			<div class="options" v-if="showOptions">
+			<div class="options" v-if="showOptions" v-set-position:dropdown>
 				<span
 					v-for="option in options"
 					:key="option"
@@ -34,20 +34,20 @@
 
 <script setup lang="ts">
 interface SelectProps {
-	options: string[] | number[];
+	options: string[];
 	placeholder?: string | number;
 	selected?: string | number | null;
 }
 
 const emit = defineEmits<{
-	select: [option: string | number];
+	select: [option: string];
 }>();
 
 defineProps<SelectProps>();
 
 const showOptions: Ref = ref<boolean>(false);
 
-function selectOption(option: string | number): void {
+function selectOption(option: string): void {
 	emit('select', option);
 	showOptions.value = false;
 }
@@ -99,7 +99,7 @@ function clickOutside() {
 	background: var(--input-bg);
 	padding: 10px;
 	border-radius: 10px;
-	box-shadow: 0px 0px 13px 0px rgb(0 0 0 / 18%);
+	box-shadow: var(--border-shadow);
 	overflow-y: auto;
 }
 .select .options .option {
