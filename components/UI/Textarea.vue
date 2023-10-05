@@ -9,15 +9,7 @@
 </template>
 
 <script setup lang="ts">
-interface TextareaType {
-	rows?: number;
-	modelValue?: string;
-	placeholder?: string;
-}
-
-interface InputEvent extends Event {
-	target: HTMLInputElement;
-}
+import type { TextareaType, InputEvent } from '@/types/form.d';
 
 defineProps<TextareaType>();
 defineEmits(['update:modelValue']);

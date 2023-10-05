@@ -11,7 +11,7 @@
 			<Icon class="sel-icon" name="heroicons:chevron-down-20-solid" color="white" />
 		</div>
 		<transition name="scale" appear>
-			<div class="options" v-if="showOptions" v-set-position:dropdown>
+			<div ref="dropdown" class="options" v-if="showOptions">
 				<span
 					v-for="option in options"
 					:key="option"
@@ -46,6 +46,8 @@ const emit = defineEmits<{
 defineProps<SelectProps>();
 
 const showOptions: Ref = ref<boolean>(false);
+const dropdown: Ref = ref<HTMLElement | null>(null);
+usePositioner({ el: dropdown });
 
 function selectOption(option: string): void {
 	emit('select', option);
@@ -88,10 +90,8 @@ function clickOutside() {
 	right: 10px;
 	transform: translate(0, -50%);
 }
-
 .select .options {
 	position: absolute;
-	top: 60px;
 	width: 100%;
 	max-height: 400px;
 	z-index: 1;

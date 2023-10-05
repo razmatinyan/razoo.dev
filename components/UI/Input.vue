@@ -9,15 +9,7 @@
 </template>
 
 <script setup lang="ts">
-interface InputType {
-	type: string;
-	modelValue?: string | number;
-	placeholder?: string;
-}
-
-interface InputEvent extends Event {
-	target: HTMLInputElement;
-}
+import type { InputType, InputEvent } from '@/types/form.d';
 
 defineProps<InputType>();
 defineEmits(['update:modelValue']);
