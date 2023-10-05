@@ -67,14 +67,16 @@ const setPosition = (el: HTMLElement, arg: string | undefined, value: Sizes): vo
 	}
 };
 
-export function usePositioner({
-	el,
-	type = 'dropdown',
-	sizes = {
-		top: 60,
-		bottom: 20,
-	},
-}: PositionerOptions) {
+export function usePositioner(
+	el: Ref,
+	{
+		type = 'dropdown',
+		sizes = {
+			top: 60,
+			bottom: 20,
+		},
+	}: PositionerOptions = {}
+) {
 	onMounted(() => {
 		watchEffect(() => {
 			const element = toValue(el);

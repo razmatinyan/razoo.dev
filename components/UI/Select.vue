@@ -47,7 +47,7 @@ defineProps<SelectProps>();
 
 const showOptions: Ref = ref<boolean>(false);
 const dropdown: Ref = ref<HTMLElement | null>(null);
-usePositioner({ el: dropdown });
+usePositioner(dropdown);
 
 function selectOption(option: string): void {
 	emit('select', option);
