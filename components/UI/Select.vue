@@ -1,5 +1,5 @@
 <template>
-	<div class="select" v-click-outside="clickOutside">
+	<div ref="select" class="select">
 		<div
 			class="ui ui-select"
 			@click="showOptions = !showOptions"
@@ -33,6 +33,8 @@
 </template>
 
 <script setup lang="ts">
+import { useClickOutside } from '~/composables/useClickOutside';
+
 interface SelectProps {
 	options: string[];
 	placeholder?: string | number;
@@ -47,7 +49,10 @@ defineProps<SelectProps>();
 
 const showOptions: Ref = ref<boolean>(false);
 const dropdown: Ref = ref<HTMLElement | null>(null);
+const select: Ref = ref<HTMLElement | null>(null);
+
 usePositioner(dropdown);
+useClickOutside(select, clickOutside);
 
 function selectOption(option: string): void {
 	emit('select', option);
