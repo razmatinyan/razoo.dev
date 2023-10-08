@@ -1,5 +1,5 @@
 <template>
-	<label>
+	<label class="checkbox-wrapper">
 		<input
 			:id="id"
 			:name="name"
@@ -13,7 +13,7 @@
 			class="ui-checkbox"
 			@change="onChange"
 		/>
-		<span>{{ label }}</span>
+		<span class="checkbox-label">{{ label }}</span>
 	</label>
 </template>
 
@@ -79,3 +79,34 @@ export default defineComponent({
 	},
 });
 </script>
+
+<style scoped>
+.checkbox-wrapper {
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+}
+.ui-checkbox {
+	appearance: none;
+	width: 1rem;
+	height: 1rem;
+	background-color: var(--input-bg);
+	border: 1px solid rgb(51 65 85);
+	border-radius: 0.25rem;
+	cursor: pointer;
+}
+.ui-checkbox:checked {
+	border-color: transparent;
+	background-color: var(--primary);
+	background-position: 50%;
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+	background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23fff' viewBox='0 0 16 16'%3E%3Cpath d='M12.207 4.793a1 1 0 0 1 0 1.414l-5 5a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L6.5 9.086l4.293-4.293a1 1 0 0 1 1.414 0z'/%3E%3C/svg%3E");
+}
+.checkbox-label {
+	display: block;
+	margin-left: 10px;
+	font-size: 1rem;
+	user-select: none;
+}
+</style>

@@ -7,7 +7,3 @@ export interface InputType {
 export interface TextareaType extends InputType {
 	rows?: number;
 }
-
-export interface InputEvent extends Event {
-	target: HTMLInputElement;
-}
