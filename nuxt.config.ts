@@ -36,7 +36,8 @@ export default defineNuxtConfig({
 	css: ['~/assets/fonts.css', '~/assets/main.css'],
 	modules: ['@nuxtjs/google-fonts', 'nuxt-icon', '@nuxt/image', '@nuxtjs/supabase'],
 	image: {
-		dir: 'public/images',
+		dir: 'public/storage/',
+		format: ['webp'],
 	},
 	supabase: {
 		redirect: false,

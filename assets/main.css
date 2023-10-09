@@ -9,10 +9,12 @@
     --black-hover: #1f1f1f;
     --bg-color: #04040d;
     --input-bg: #111827;
+    --placeholder-color: #767676;
 
     /* RGB */
     --primary-soft: rgba(69, 92, 233, .5);
     --bg-soft: rgba(4, 4, 13, .9);
+    --lk-gray: rgba(55 65 81);
 
     /* Transition */
     --smooth: ease .2s;
@@ -132,3 +134,5 @@ h3 { font-size: 0.9em; }
 h4 { font-size: 0.6em; }
 h5 { font-size: 0.3em; }
 h6 { font-size: 0.1em; }
+
+img { display: block; max-width: 100%; }

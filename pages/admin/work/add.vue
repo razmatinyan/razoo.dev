@@ -51,10 +51,16 @@
 				</div>
 			</div>
 		</div>
+		<div class="form-row">
+			<h2 class="row-title">Cover Image</h2>
+			<UIFileInput v-model="form.coverImage" required />
+		</div>
 	</form>
 </template>
 
 <script setup lang="ts">
+import type { Images } from '@/types/images.d';
+
 definePageMeta({
 	middleware: ['auth'],
 	layout: 'admin',
@@ -67,11 +73,6 @@ type TechStack = {
 	values: string[];
 };
 
-interface ProjectImages {
-	path: string;
-	order: number;
-}
-
 interface Work {
 	title: string;
 	siteUrl: string;
@@ -79,8 +80,8 @@ interface Work {
 	year?: string | number;
 	madeWith?: string;
 	techStack: ArrOfObj;
-	coverImage: string;
-	allImages: ProjectImages[];
+	coverImage: Images;
+	allImages: Images[];
 }
 
 const form: Work = reactive({
@@ -90,7 +91,7 @@ const form: Work = reactive({
 	year: '',
 	madeWith: '',
 	techStack: [{ data: [] }, { data: [] }, { data: [] }] as ArrOfObj,
-	coverImage: '',
+	coverImage: { filename: '' },
 	allImages: [],
 });
 
@@ -135,7 +136,7 @@ const techStackOptions: TechStack[] = [
 	gap: 20px;
 }
 .row-title {
-	margin-bottom: 30px;
+	margin: 30px 0;
 	font-size: 1.9rem;
 }
 .columns {
