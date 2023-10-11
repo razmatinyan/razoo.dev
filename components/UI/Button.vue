@@ -16,9 +16,10 @@
 	font-size: 1.1rem;
 	letter-spacing: 0.95px;
 	border: 0;
-	border-radius: .2rem;
+	border-radius: 0.2rem;
 	background: var(--primary);
 	color: var(--white);
+	user-select: none;
 	outline: none;
 	transition: var(--smooth);
 }

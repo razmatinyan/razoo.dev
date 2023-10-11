@@ -2,12 +2,13 @@
 	<h1 class="section-title center">Add Work</h1>
 	<form @submit.prevent id="form">
 		<div class="form-row double-row">
-			<UIInput v-model="form.title" id="title" type="text" placeholder="Colorgen" />
+			<UIInput v-model="form.title" id="title" type="text" placeholder="Colorgen" required />
 			<UIInput
 				v-model="form.siteUrl"
 				id="siteUrl"
 				type="text"
 				placeholder="https://colorgen.co/"
+				required
 			/>
 		</div>
 		<div class="form-row">
@@ -16,6 +17,7 @@
 				id="description"
 				type="text"
 				placeholder="This website is about..."
+				required
 			/>
 		</div>
 		<div class="form-row">
@@ -46,6 +48,7 @@
 							:value="val"
 							:id="val"
 							:label="val"
+							required
 						/>
 					</div>
 				</div>
@@ -56,6 +59,17 @@
 			<UIFileInput v-model="form.coverImage" required />
 		</div>
 	</form>
+
+	<UIModal v-model="isOpen" title="Delete Image">
+		<template #content>
+			<p class="content-text">Are you sure you want to delete this image?</p>
+		</template>
+
+		<template #buttons>
+			<UIButton class="" @click="isOpen = false">Cancel</UIButton>
+			<UIButton class="">Delete</UIButton>
+		</template>
+	</UIModal>
 </template>
 
 <script setup lang="ts">
@@ -84,6 +98,7 @@ interface Work {
 	allImages: Images[];
 }
 
+const isOpen = ref<boolean>(false);
 const form: Work = reactive({
 	title: '',
 	siteUrl: '',
