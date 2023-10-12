@@ -117,6 +117,7 @@ export default defineComponent({
 	height: 100%;
 	padding: 0 20px;
 	z-index: 1001;
+	cursor: default;
 }
 .overlay {
 	position: absolute;
@@ -157,6 +158,7 @@ export default defineComponent({
 .modal-content > .buttons {
 	display: flex;
 	align-items: center;
+	gap: 10px;
 	margin-top: 30px;
 }
 .close {

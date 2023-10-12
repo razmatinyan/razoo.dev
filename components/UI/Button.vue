@@ -1,8 +1,37 @@
 <template>
-	<button class="ui-btn">
+	<button class="ui-btn" v-bind="$attrs" @click="onClick" :class="ui" :disabled="disabled">
 		<slot />
 	</button>
 </template>
+
+<script lang="ts">
+export default defineComponent({
+	inheritAttrs: false,
+	props: {
+		ui: {
+			type: [Array, String, Object],
+		},
+		type: {
+			type: String,
+			default: 'button',
+		},
+		disabled: {
+			type: Boolean,
+			default: false,
+		},
+	},
+	emits: ['click'],
+	setup(props, { emit }) {
+		const onClick = () => {
+			emit('click');
+		};
+
+		return {
+			onClick,
+		};
+	},
+});
+</script>
 
 <style scoped>
 .ui-btn {

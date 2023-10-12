@@ -29,10 +29,28 @@
 		</div>
 
 		<div v-if="refImage" class="image-block">
-			<div class="options"></div>
+			<div class="options">
+				<div class="option">
+					<Icon name="heroicons:arrow-path-20-solid" />
+				</div>
+				<div class="option" @click="isOpen = !isOpen">
+					<Icon name="heroicons:x-mark" />
+				</div>
+			</div>
 			<div class="img">
 				<NuxtPicture :src="refImage" />
 			</div>
+
+			<UIModal v-model="isOpen" title="Delete image">
+				<template #content>
+					<p class="content-text">This File will be deleted forever. Are you sure?</p>
+				</template>
+
+				<template #buttons>
+					<UIButton class="" @click="isOpen = false">Cancel</UIButton>
+					<UIButton class="" @click="deleteImage(refImage)">Delete</UIButton>
+				</template>
+			</UIModal>
 		</div>
 	</div>
 </template>
@@ -72,6 +90,7 @@ export default defineComponent({
 		const loading = ref<boolean>(false);
 		const { text, required, image } = props;
 		const refImage = toRef(image);
+		const isOpen = ref<boolean>(false);
 
 		const toggleActive = (): void => {
 			active.value = !active.value;
@@ -99,11 +118,14 @@ export default defineComponent({
 
 			const res = unref(data) as UploadResult;
 			refImage.value = res.data.filename;
-
 			loading.value = false;
 
 			emit('update:modelValue', res.data as Images);
 			emit('change');
+		};
+
+		const deleteImage = async (filename: string): Promise<void> => {
+			console.log(filename);
 		};
 
 		return {
@@ -114,7 +136,9 @@ export default defineComponent({
 			required,
 			image,
 			refImage,
+			isOpen,
 			onChange,
+			deleteImage,
 			triggerInput,
 			toggleActive,
 		};
@@ -169,6 +193,38 @@ export default defineComponent({
 	color: var(--placeholder-color);
 	transition: color var(--smooth);
 }
+.img {
+	border-top-right-radius: 4px;
+	border-top-left-radius: 4px;
+	border-bottom-right-radius: 8px;
+	border-bottom-left-radius: 8px;
+	overflow: hidden;
+}
+.options {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 6px;
+	margin-bottom: 10px;
+}
+.option {
+	width: 30px;
+	height: 30px;
+	padding: 5px;
+	border: 1px solid rgb(51 65 85);
+	border-radius: 4px;
+	transition: background var(--smooth);
+}
+.option:hover {
+	background: rgba(255, 255, 255, 0.1);
+}
+.option .icon {
+	display: block;
+	width: 100%;
+	height: 100%;
+	color: white;
+}
+
 input {
 	display: none;
 }

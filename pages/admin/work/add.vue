@@ -59,17 +59,6 @@
 			<UIFileInput v-model="form.coverImage" required />
 		</div>
 	</form>
-
-	<UIModal v-model="isOpen" title="Delete Image">
-		<template #content>
-			<p class="content-text">Are you sure you want to delete this image?</p>
-		</template>
-
-		<template #buttons>
-			<UIButton class="" @click="isOpen = false">Cancel</UIButton>
-			<UIButton class="">Delete</UIButton>
-		</template>
-	</UIModal>
 </template>
 
 <script setup lang="ts">
