@@ -1,18 +1,27 @@
 <template>
-	<button class="ui-btn" v-bind="$attrs" @click="onClick" :class="ui" :disabled="disabled">
+	<button
+		class="ui-btn"
+		:class="btnType"
+		:type="type"
+		:disabled="disabled"
+		v-bind="$attrs"
+		@click="onClick"
+	>
 		<slot />
 	</button>
 </template>
 
 <script lang="ts">
+type ButtonTypes = 'button' | 'submit' | 'reset';
+
 export default defineComponent({
 	inheritAttrs: false,
 	props: {
-		ui: {
-			type: [Array, String, Object],
+		btnType: {
+			type: String,
 		},
 		type: {
-			type: String,
+			type: String as PropType<ButtonTypes>,
 			default: 'button',
 		},
 		disabled: {
@@ -45,7 +54,7 @@ export default defineComponent({
 	font-size: 1.1rem;
 	letter-spacing: 0.95px;
 	border: 0;
-	border-radius: 0.2rem;
+	border-radius: 0.5rem;
 	background: var(--primary);
 	color: var(--white);
 	user-select: none;
@@ -58,6 +67,9 @@ export default defineComponent({
 .full-width {
 	width: 100%;
 }
+.half-height {
+	height: 2.5rem;
+}
 
 .corner {
 	border-radius: 0.7rem;
@@ -68,5 +80,20 @@ export default defineComponent({
 [disabled] {
 	background: var(--primary-dark);
 	cursor: not-allowed;
+}
+
+.red {
+	background: var(--red);
+}
+.red:hover {
+	background: var(--red-hover);
+}
+.border {
+	border: 1px solid rgb(51 65 85);
+	background: var(--input-bg);
+}
+.border:hover {
+	border-color: rgb(98 122 157);
+	background: var(--input-bg);
 }
 </style>

@@ -56,7 +56,21 @@
 		</div>
 		<div class="form-row">
 			<h2 class="row-title">Cover Image</h2>
-			<UIFileInput v-model="form.coverImage" required />
+			<UIFileInput v-model="form.coverImage" text="Add Cover Image" required />
+		</div>
+		<div class="form-row">
+			<h2 class="row-title">Project Images</h2>
+			<div class="all-images">
+				{{ form.allImages }}
+				<div v-for="(image, index) in form.allImages" class="image">
+					<UIFileInput
+						:key="index"
+						v-model="form.allImages[index]"
+						@add="addImageField"
+						@delete="deleteEmptyField(index)"
+					/>
+				</div>
+			</div>
 		</div>
 	</form>
 </template>
@@ -87,7 +101,6 @@ interface Work {
 	allImages: Images[];
 }
 
-const isOpen = ref<boolean>(false);
 const form: Work = reactive({
 	title: '',
 	siteUrl: '',
@@ -96,7 +109,11 @@ const form: Work = reactive({
 	madeWith: '',
 	techStack: [{ data: [] }, { data: [] }, { data: [] }] as ArrOfObj,
 	coverImage: { filename: '' },
-	allImages: [],
+	allImages: [{ filename: '' }],
+});
+
+watch(form.allImages, (newVal, oldVal) => {
+	console.log(newVal, oldVal);
 });
 
 const madeWithOptions: Array<string> = ['Solo', 'Teamwork'];
@@ -125,6 +142,14 @@ const techStackOptions: TechStack[] = [
 		values: ['MySQL', 'MongoDB', 'Supabase', 'GraphQL', 'Apollo'],
 	},
 ];
+
+const addImageField = (): void => {
+	form.allImages.push({ filename: '' });
+};
+
+const deleteEmptyField = (index: number): void => {
+	form.allImages.splice(index, 1);
+};
 </script>
 
 <style scoped>
@@ -161,5 +186,8 @@ const techStackOptions: TechStack[] = [
 }
 .checkbox-wrapper:not(:last-child) {
 	margin-bottom: 10px;
+}
+.image:not(:last-child) {
+	margin-bottom: 30px;
 }
 </style>

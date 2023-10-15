@@ -4,16 +4,17 @@
 		@dragleave.prevent="toggleActive"
 		@dragover.prevent
 		@drop.prevent="toggleActive"
-		@click="triggerInput"
+		@click="(e) => callInput && triggerInput()"
 		:style="{ 'pointer-events': loading ? 'none' : 'all' }"
 		:class="{ 'active-area': active, uploaded: refImage }"
+		v-bind="$attrs"
 		class="area"
 	>
 		<Transition name="fade" appear>
 			<UIFileInputLoading v-show="loading" />
 		</Transition>
 
-		<div v-if="!refImage" class="area-content">
+		<div v-show="!refImage" class="area-content">
 			<div class="in">
 				<Icon name="heroicons:plus-20-solid" />
 				<span class="text">{{ text }}</span>
@@ -30,7 +31,7 @@
 
 		<div v-if="refImage" class="image-block">
 			<div class="options">
-				<div class="option">
+				<div class="option" @click="triggerInput">
 					<Icon name="heroicons:arrow-path-20-solid" />
 				</div>
 				<div class="option" @click="isOpen = !isOpen">
@@ -40,18 +41,24 @@
 			<div class="img">
 				<NuxtPicture :src="refImage" />
 			</div>
-
-			<UIModal v-model="isOpen" title="Delete image">
-				<template #content>
-					<p class="content-text">This File will be deleted forever. Are you sure?</p>
-				</template>
-
-				<template #buttons>
-					<UIButton class="" @click="isOpen = false">Cancel</UIButton>
-					<UIButton class="" @click="deleteImage(refImage)">Delete</UIButton>
-				</template>
-			</UIModal>
 		</div>
+
+		<UIModal v-model="isOpen" title="Delete image">
+			<template #content>
+				<p class="content-text">This File will be deleted forever. Are you sure?</p>
+			</template>
+
+			<template #buttons>
+				<UIButton class="border half-height" @click="isOpen = false">Cancel</UIButton>
+				<UIButton class="red half-height" @click="deleteImage(refImage)">Delete</UIButton>
+			</template>
+		</UIModal>
+
+		<UIModal v-model="isError.open" title="Error">
+			<template #content>
+				<p class="content-text">{{ isError.msg }}</p>
+			</template>
+		</UIModal>
 	</div>
 </template>
 
@@ -59,7 +66,7 @@
 import type { Images } from '@/types/images.d';
 
 type UploadResult = {
-	status: number;
+	statusCode: number;
 	data: Images;
 	message?: string;
 };
@@ -83,14 +90,19 @@ export default defineComponent({
 			default: '',
 		},
 	},
-	emits: ['update:modelValue', 'change'],
+	emits: ['update:modelValue', 'add', 'change', 'delete', 'error'],
 	setup(props, { emit }) {
+		const { text, required, image } = props;
+		const refImage = toRef(image);
 		const input = ref<HTMLInputElement>();
 		const active = ref<boolean>(false);
 		const loading = ref<boolean>(false);
-		const { text, required, image } = props;
-		const refImage = toRef(image);
 		const isOpen = ref<boolean>(false);
+		const callInput = ref<boolean>(true);
+		const isError = reactive({
+			open: false,
+			msg: '',
+		});
 
 		const toggleActive = (): void => {
 			active.value = !active.value;
@@ -105,8 +117,15 @@ export default defineComponent({
 			const target = event.target as HTMLInputElement;
 			const file = target.files ? (target.files[0] as File) : '';
 
-			if (!file) return;
-			if (file.type !== 'image/jpeg' && file.type !== 'image/png') return;
+			if (!file) {
+				loading.value = false;
+				return;
+			}
+
+			if (file.type !== 'image/jpeg' && file.type !== 'image/png') {
+				loading.value = false;
+				return handleError('Error with file type.');
+			}
 
 			const formData = new FormData();
 			formData.append('file', file);
@@ -114,18 +133,65 @@ export default defineComponent({
 			const { data, error } = await useFetch('/api/admin/upload', {
 				method: 'post',
 				body: formData,
+				onResponseError({ response }) {
+					handleError(response._data.statusMessage);
+				},
 			});
 
-			const res = unref(data) as UploadResult;
-			refImage.value = res.data.filename;
-			loading.value = false;
+			if (!error.value) {
+				const res = unref(data) as UploadResult;
 
-			emit('update:modelValue', res.data as Images);
-			emit('change');
+				if (res.data.filename) {
+					refImage.value = res.data.filename;
+					callInput.value = false;
+					emit('update:modelValue', res.data as Images);
+					emit('change');
+				} else {
+					handleError('No Image Recieved.');
+				}
+			}
+
+			loading.value = false;
 		};
 
-		const deleteImage = async (filename: string): Promise<void> => {
-			console.log(filename);
+		const deleteImage = async (filename: string, emptyVals: boolean = true): Promise<void> => {
+			if (filename) {
+				const { data, error } = await useFetch('/api/admin/delete-file', {
+					method: 'delete',
+					body: {
+						filename,
+					},
+					onResponseError({ response }) {
+						handleError(response._data.statusMessage);
+					},
+				});
+
+				if (!error.value) {
+					const res = unref(data) as UploadResult;
+
+					if (res.data.filename === '') {
+						if (emptyVals) {
+							refImage.value = '';
+							callInput.value = true;
+							emit('delete');
+						}
+						input.value!.files = new DataTransfer().files;
+						emit('update:modelValue', res.data as Images);
+						emit('change');
+					} else {
+						isOpen.value = false;
+						return handleError('Error while changing value.');
+					}
+				}
+			}
+
+			isOpen.value = false;
+		};
+
+		const handleError = (errText: string): void => {
+			isError.msg = errText;
+			isError.open = true;
+			emit('error', errText);
 		};
 
 		return {
@@ -137,11 +203,22 @@ export default defineComponent({
 			image,
 			refImage,
 			isOpen,
+			isError,
+			callInput,
 			onChange,
 			deleteImage,
 			triggerInput,
 			toggleActive,
 		};
+	},
+	watch: {
+		async refImage(newVal: string, oldVal: string) {
+			if (newVal && oldVal) {
+				await this.deleteImage(oldVal, false);
+				this.$emit('update:modelValue', { filename: newVal } as Images);
+			}
+			if (!oldVal) this.$emit('add');
+		},
 	},
 });
 </script>

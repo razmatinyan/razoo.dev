@@ -1,40 +1,52 @@
 <template>
-	<transition
-		name="modal"
-		@before-enter="useScrollbarPadding('stop')"
-		@after-leave="useScrollbarPadding('start')"
-	>
+	<transition name="overlay">
 		<div v-show="isOpen" :id="id" class="dialog">
-			<div class="overlay" @click="(e) => !preventClose && close(false)"></div>
-			<div
-				class="modal"
-				:style="{
-					'max-width': width + 'px',
-				}"
-				@click.stop
+			<transition name="overlay">
+				<div
+					v-show="isOpen"
+					class="overlay"
+					@click="(e) => !preventClose && close(false)"
+				></div>
+			</transition>
+
+			<transition
+				name="modal"
+				@before-enter="useScrollbarPadding('stop')"
+				@after-leave="useScrollbarPadding('start')"
 			>
-				<div class="modal-header">
-					<h2 class="modal-title">{{ title }}</h2>
-				</div>
-
-				<div class="modal-content">
-					<div class="content" v-if="$slots.content">
-						<slot name="content"></slot>
+				<div
+					v-show="isOpen"
+					class="modal"
+					:style="{
+						'max-width': width + 'px',
+					}"
+					@click.stop
+				>
+					<div class="modal-header">
+						<h2 class="modal-title">{{ title }}</h2>
 					</div>
-					<div class="buttons" v-if="$slots.buttons">
-						<slot name="buttons"></slot>
+
+					<div class="modal-content">
+						<div class="content" v-if="$slots.content">
+							<slot name="content"></slot>
+						</div>
+						<div class="buttons" v-if="$slots.buttons">
+							<slot name="buttons"></slot>
+						</div>
+					</div>
+
+					<div class="close" @click="close(false)">
+						<Icon name="heroicons:x-mark-20-solid" />
 					</div>
 				</div>
-
-				<div class="close" @click="close(false)">
-					<Icon name="heroicons:x-mark-20-solid" />
-				</div>
-			</div>
+			</transition>
 		</div>
 	</transition>
 </template>
 
 <script lang="ts">
+import '@/assets/modalTransitions.css';
+
 export default defineComponent({
 	inheritAttrs: false,
 	props: {
@@ -182,28 +194,6 @@ export default defineComponent({
 	--icon-size: 0.7em;
 	width: var(--icon-size);
 	height: var(--icon-size);
-}
-.modal-enter-active {
-	transition: all 300ms ease-out;
-}
-.modal-enter-from {
-	opacity: 0;
-	transform: scale(0.95);
-}
-.modal-enter-to {
-	opacity: 1;
-	transform: scale(1);
-}
-.modal-leave-active {
-	transition: all 200ms ease-in;
-}
-.modal-leave-from {
-	opacity: 1;
-	transform: scale(1);
-}
-.modal-leave-to {
-	opacity: 0;
-	transform: scale(0.95);
 }
 
 @media only screen and (max-width: 480px) {
