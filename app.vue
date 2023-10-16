@@ -92,7 +92,7 @@ onBeforeUnmount(() => {
 	width: 100%;
 	height: 100%;
 	opacity: 8%;
-	background-image: url(@/images/noise.png);
+	background-image: url(./public/images/noise.png);
 	background-repeat: repeat;
 	z-index: 9997;
 	user-select: none;
