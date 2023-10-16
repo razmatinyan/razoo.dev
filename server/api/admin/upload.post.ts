@@ -4,7 +4,7 @@ import fs from 'fs';
 import { H3Event } from 'h3';
 import type { Images } from '@/types/images.d';
 
-const DIR = './public/storage/';
+const DIR = process.env.NODE_ENV === 'development' ? './public/storage/' : '/storage/';
 
 export default defineEventHandler(async (event: H3Event) => {
 	const form = formidable({ uploadDir: DIR });
