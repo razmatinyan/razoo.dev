@@ -14,8 +14,10 @@ import '../locomotive-scroll/dist/locomotive-scroll.css';
 import gsap from 'gsap';
 // import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-gsap.config({
-	nullTargetWarn: false,
+onMounted(() => {
+	gsap.config({
+		nullTargetWarn: false,
+	});
 });
 
 // const nuxtApp = useNuxtApp();
