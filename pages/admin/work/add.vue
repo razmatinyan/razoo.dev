@@ -56,18 +56,17 @@
 		</div>
 		<div class="form-row">
 			<h2 class="row-title">Cover Image</h2>
-			<UIFileInput v-model="form.coverImage" text="Add Cover Image" required />
+			<UIFileInput v-model="form.coverImage.filename" text="Add Cover Image" required />
 		</div>
 		<div class="form-row">
 			<h2 class="row-title">Project Images</h2>
 			<div class="all-images">
-				{{ form.allImages }}
 				<div v-for="(image, index) in form.allImages" class="image">
 					<UIFileInput
-						:key="index"
-						v-model="form.allImages[index]"
+						:key="image.id"
+						v-model="form.allImages[index].filename"
 						@add="addImageField"
-						@delete="deleteEmptyField(index)"
+						@delete="deleteImageField(index)"
 					/>
 				</div>
 			</div>
@@ -77,13 +76,14 @@
 
 <script setup lang="ts">
 import type { Images } from '@/types/images.d';
+import '@/assets/modalTransitions.css';
 
 definePageMeta({
 	middleware: ['auth'],
 	layout: 'admin',
 });
 
-type ArrOfObj = Array<{ [key: string]: string[] }>;
+type RecordString = Record<string, string[]>[];
 
 type TechStack = {
 	type: string;
@@ -96,24 +96,21 @@ interface Work {
 	description?: string;
 	year?: string | number;
 	madeWith?: string;
-	techStack: ArrOfObj;
+	techStack: RecordString;
 	coverImage: Images;
 	allImages: Images[];
 }
 
+let count = ref(0);
 const form: Work = reactive({
 	title: '',
 	siteUrl: '',
 	description: '',
 	year: '',
 	madeWith: '',
-	techStack: [{ data: [] }, { data: [] }, { data: [] }] as ArrOfObj,
+	techStack: [{ data: [] }, { data: [] }, { data: [] }] as RecordString,
 	coverImage: { filename: '' },
-	allImages: [{ filename: '' }],
-});
-
-watch(form.allImages, (newVal, oldVal) => {
-	console.log(newVal, oldVal);
+	allImages: [{ id: count.value++, filename: '' }],
 });
 
 const madeWithOptions: Array<string> = ['Solo', 'Teamwork'];
@@ -144,12 +141,20 @@ const techStackOptions: TechStack[] = [
 ];
 
 const addImageField = (): void => {
-	form.allImages.push({ filename: '' });
+	form.allImages.push({ id: count.value++, filename: '' });
 };
 
-const deleteEmptyField = (index: number): void => {
+const deleteImageField = (index: number): void => {
 	form.allImages.splice(index, 1);
 };
+
+watch(
+	() => form.allImages,
+	(newVal) => {
+		if (!newVal.length) addImageField();
+	},
+	{ deep: true }
+);
 </script>
 
 <style scoped>

@@ -45,8 +45,6 @@
 </template>
 
 <script lang="ts">
-import '@/assets/modalTransitions.css';
-
 export default defineComponent({
 	inheritAttrs: false,
 	props: {

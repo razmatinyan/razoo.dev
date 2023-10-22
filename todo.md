@@ -1,1 +1,1 @@
-#### Fix reactivity (or sth else) issue with form.allImages in add.vue
+#### Change image upload API to Cloudinary API

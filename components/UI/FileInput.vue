@@ -17,11 +17,11 @@
 		<div v-show="!refImage" class="area-content">
 			<div class="in">
 				<Icon name="heroicons:plus-20-solid" />
-				<span class="text">{{ text }}</span>
+				<span class="text">{{ $props.text }}</span>
 			</div>
 
 			<input
-				:required="required"
+				:required="$props.required"
 				ref="input"
 				type="file"
 				class="file"
@@ -74,8 +74,8 @@ type UploadResult = {
 export default defineComponent({
 	props: {
 		modelValue: {
-			type: Object,
-			default: {},
+			type: String,
+			default: '',
 		},
 		text: {
 			type: String,
@@ -85,15 +85,10 @@ export default defineComponent({
 			type: Boolean,
 			default: false,
 		},
-		image: {
-			type: String,
-			default: '',
-		},
 	},
 	emits: ['update:modelValue', 'add', 'change', 'delete', 'error'],
 	setup(props, { emit }) {
-		const { text, required, image } = props;
-		const refImage = toRef(image);
+		const refImage = toRef(props.modelValue);
 		const input = ref<HTMLInputElement>();
 		const active = ref<boolean>(false);
 		const loading = ref<boolean>(false);
@@ -142,10 +137,12 @@ export default defineComponent({
 				const res = unref(data) as UploadResult;
 
 				if (res.data.filename) {
+					let emitAddOrNot = true;
+					if (refImage.value !== '') emitAddOrNot = false;
 					refImage.value = res.data.filename;
-					callInput.value = false;
-					emit('update:modelValue', res.data as Images);
+					emit('update:modelValue', res.data.filename);
 					emit('change');
+					if (emitAddOrNot) emit('add');
 				} else {
 					handleError('No Image Recieved.');
 				}
@@ -154,7 +151,12 @@ export default defineComponent({
 			loading.value = false;
 		};
 
-		const deleteImage = async (filename: string, emptyVals: boolean = true): Promise<void> => {
+		const deleteImage = async (
+			filename: string,
+			emptyVals: boolean = true
+		): Promise<void | ReturnType<typeof setTimeout>> => {
+			isOpen.value = false;
+
 			if (filename) {
 				const { data, error } = await useFetch('/api/admin/delete-file', {
 					method: 'delete',
@@ -172,20 +174,21 @@ export default defineComponent({
 					if (res.data.filename === '') {
 						if (emptyVals) {
 							refImage.value = '';
-							callInput.value = true;
-							emit('delete');
+							input.value!.files = new DataTransfer().files;
+							emit('update:modelValue', '');
+							return setTimeout(() => {
+								emit('delete');
+							}, 200);
 						}
+
 						input.value!.files = new DataTransfer().files;
-						emit('update:modelValue', res.data as Images);
-						emit('change');
+						emit('update:modelValue', res.data.filename);
+						return emit('change');
 					} else {
-						isOpen.value = false;
 						return handleError('Error while changing value.');
 					}
 				}
 			}
-
-			isOpen.value = false;
 		};
 
 		const handleError = (errText: string): void => {
@@ -198,9 +201,6 @@ export default defineComponent({
 			input,
 			active,
 			loading,
-			text,
-			required,
-			image,
 			refImage,
 			isOpen,
 			isError,
@@ -213,11 +213,15 @@ export default defineComponent({
 	},
 	watch: {
 		async refImage(newVal: string, oldVal: string) {
+			this.refImage = this.$props.modelValue;
+
 			if (newVal && oldVal) {
 				await this.deleteImage(oldVal, false);
-				this.$emit('update:modelValue', { filename: newVal } as Images);
+				this.$emit('update:modelValue', newVal);
 			}
-			if (!oldVal) this.$emit('add');
+
+			if (this.refImage === '') this.callInput = true;
+			else this.callInput = false;
 		},
 	},
 });
