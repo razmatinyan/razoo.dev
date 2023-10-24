@@ -16,7 +16,7 @@
 
 		<div v-show="!refImage" class="area-content">
 			<div class="in">
-				<Icon name="heroicons:plus-20-solid" />
+				<Icon name="heroicons:plus-20-solid" size="1.5em" />
 				<span class="text">{{ $props.text }}</span>
 			</div>
 
@@ -39,7 +39,7 @@
 				</div>
 			</div>
 			<div class="img">
-				<NuxtPicture :src="refImage" />
+				<NuxtPicture provider="cloudinary" :src="refImage" />
 			</div>
 		</div>
 
@@ -93,7 +93,7 @@ export default defineComponent({
 		const active = ref<boolean>(false);
 		const loading = ref<boolean>(false);
 		const isOpen = ref<boolean>(false);
-		const callInput = ref<boolean>(true);
+		const callInput = refImage.value ? ref<boolean>(false) : ref<boolean>(true);
 		const isError = reactive({
 			open: false,
 			msg: '',
@@ -105,6 +105,21 @@ export default defineComponent({
 
 		const triggerInput = (): void => {
 			input.value?.click();
+		};
+
+		const convertToDataURL = (file: File) => {
+			return new Promise((resolve, reject) => {
+				const fileReader = new FileReader();
+				fileReader.readAsDataURL(file);
+
+				fileReader.onload = () => {
+					resolve(fileReader.result);
+				};
+
+				fileReader.onerror = (error) => {
+					reject(error);
+				};
+			});
 		};
 
 		const onChange = async (event: InputEvent): Promise<void> => {
@@ -125,9 +140,12 @@ export default defineComponent({
 			const formData = new FormData();
 			formData.append('file', file);
 
+			const requestFile = await convertToDataURL(file);
 			const { data, error } = await useFetch('/api/admin/upload', {
 				method: 'post',
-				body: formData,
+				body: {
+					file: requestFile,
+				},
 				onResponseError({ response }) {
 					handleError(response._data.statusMessage);
 				},

@@ -4,7 +4,7 @@
 		<NuxtLink v-for="item of menu" :key="item.text" :to="item.path" class="menu-item">
 			<div class="in">
 				<div class="icon-wrapper">
-					<Icon :name="`heroicons:${item.icon}`" color="white" />
+					<Icon :name="`heroicons:${item.icon}`" color="white" size="1.5em" />
 				</div>
 				<h2 class="item-title">{{ item.text }}</h2>
 			</div>

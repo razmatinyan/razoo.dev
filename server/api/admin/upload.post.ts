@@ -1,58 +1,46 @@
-import formidable from 'formidable';
-import type { Files as FormidableFiles, Fields as FormidableFields } from 'formidable';
-import fs from 'fs';
 import { H3Event } from 'h3';
+import { v2 as cloudinary } from 'cloudinary';
 import type { Images } from '@/types/images.d';
+import type { UploadApiOptions } from '@/types/cloudinary.d';
 
-const DIR = process.env.NODE_ENV === 'development' ? './public/storage/' : '/storage/';
+const config = useRuntimeConfig();
+
+cloudinary.config({
+	cloud_name: config.cloud_name,
+	api_key: config.cloud_api_key,
+	api_secret: config.cloud_secret,
+	secure: true,
+});
+
+const options: UploadApiOptions = {
+	overwrite: true,
+	invalidate: true,
+	resource_type: 'auto',
+};
 
 export default defineEventHandler(async (event: H3Event) => {
-	const form = formidable({ uploadDir: DIR });
-	let _: FormidableFields;
-	let files: FormidableFiles;
-	let res: Images | undefined = { filename: '' };
+	const body = await readBody<{ file: string }>(event);
+	const file: string = body.file;
 
-	if (!fs.existsSync(DIR)) {
-		fs.mkdirSync(DIR);
+	if (!file) {
+		return {
+			statusCode: 400,
+			statusMessage: 'No File provided.',
+		};
 	}
 
 	try {
-		[_, files] = await form.parse(event.node.req);
+		const uploadedFile = await cloudinary.uploader.upload(file, options);
+		const result: Images = { filename: `${uploadedFile.public_id}.${uploadedFile.format}` };
+
+		return {
+			statusCode: 200,
+			data: result,
+		};
 	} catch (err) {
-		throw createError({
+		return {
 			statusCode: 400,
-			statusMessage: 'Directory does not exist.',
-		});
+			statusMessage: 'Failed to upload image.',
+		};
 	}
-
-	if (files) {
-		let filename: string = '';
-		let realFileName: string = '';
-
-		if (Array.isArray(files.file)) {
-			files.file.forEach((file: formidable.File) => {
-				const parts = file.originalFilename?.split('.') as string[];
-				const title: string = parts[0];
-				const ext: string = parts[parts.length - 1];
-
-				realFileName = `${Date.now()}-${title}.${ext}`;
-				filename = `${DIR}${realFileName}`;
-
-				fs.rename(file.filepath, filename, (err) => {
-					if (err)
-						throw createError({
-							statusCode: 400,
-							statusMessage: 'Error while image upload.',
-						});
-				});
-			});
-		}
-
-		res = { filename: realFileName };
-	}
-
-	return {
-		statusCode: 200,
-		data: res,
-	};
 });

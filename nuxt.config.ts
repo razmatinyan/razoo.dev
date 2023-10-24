@@ -5,6 +5,9 @@ export default defineNuxtConfig({
 		typeCheck: true,
 	},
 	runtimeConfig: {
+		cloud_name: process.env.CLOUD_NAME,
+		cloud_api_key: process.env.CLOUD_API_KEY,
+		cloud_secret: process.env.CLOUD_API_SECRET,
 		public: {
 			DOMAIN: process.env.DOMAIN ?? 'https://127.0.0.1:3000/',
 		},
@@ -38,6 +41,9 @@ export default defineNuxtConfig({
 	image: {
 		dir: 'public/storage/',
 		format: ['webp'],
+		cloudinary: {
+			baseURL: `https://res.cloudinary.com/${process.env.CLOUD_NAME}/image/upload/`,
+		},
 	},
 	supabase: {
 		redirect: false,
@@ -53,6 +59,6 @@ export default defineNuxtConfig({
 		useStylesheet: true,
 	},
 	build: {
-		transpile: ['gsap']
-	}
+		transpile: ['gsap'],
+	},
 });
