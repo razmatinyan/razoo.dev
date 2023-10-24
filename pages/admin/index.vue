@@ -21,7 +21,7 @@ definePageMeta({
 interface Menu {
 	path: string;
 	text: string;
-	icon: string;
+	icon?: string;
 }
 
 const menu: Menu[] = [

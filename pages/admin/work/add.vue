@@ -101,7 +101,7 @@ interface Work {
 	allImages: Images[];
 }
 
-let count = ref(0);
+let imgId = ref(0);
 const form: Work = reactive({
 	title: '',
 	siteUrl: '',
@@ -110,7 +110,7 @@ const form: Work = reactive({
 	madeWith: '',
 	techStack: [{ data: [] }, { data: [] }, { data: [] }] as RecordString,
 	coverImage: { filename: '' },
-	allImages: [{ id: count.value++, filename: '' }],
+	allImages: [{ id: imgId.value++, filename: '' }],
 });
 
 const madeWithOptions: Array<string> = ['Solo', 'Teamwork'];
@@ -141,7 +141,7 @@ const techStackOptions: TechStack[] = [
 ];
 
 const addImageField = (): void => {
-	form.allImages.push({ id: count.value++, filename: '' });
+	form.allImages.push({ id: imgId.value++, filename: '' });
 };
 
 const deleteImageField = (index: number): void => {

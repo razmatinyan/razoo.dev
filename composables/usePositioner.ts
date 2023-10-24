@@ -41,13 +41,19 @@ const setDistance = (el: HTMLElement, value: number): void => {
 	el.style.setProperty('--distance', `${value}px`);
 };
 
-const setPosition = (el: HTMLElement, arg: string | undefined, value: Sizes): void => {
+/**
+ * Calculates correct position of element for appling composable
+ * @param el element to which will be applied function
+ * @param type type of ui component
+ * @param value type {Sizes} options
+ */
+const setPosition = (el: HTMLElement, type: string | undefined, value: Sizes): void => {
 	const values: Sizes = {
 		top: value.top,
 		bottom: value.bottom,
 	};
 
-	if (arg === 'dropdown') {
+	if (type === 'dropdown') {
 		const { top, bottom, height } = getPositionsAndViewport(el);
 
 		if (bottom) {
@@ -67,6 +73,11 @@ const setPosition = (el: HTMLElement, arg: string | undefined, value: Sizes): vo
 	}
 };
 
+/**
+ * Sets correct position to element when it is mounted
+ * @param el Ref element to which will be applied
+ * @param param1 options of function that will be applied
+ */
 export function usePositioner(
 	el: Ref,
 	{

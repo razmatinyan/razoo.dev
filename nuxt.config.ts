@@ -52,4 +52,7 @@ export default defineNuxtConfig({
 		display: 'swap',
 		useStylesheet: true,
 	},
+	build: {
+		transpile: ['gsap']
+	}
 });
