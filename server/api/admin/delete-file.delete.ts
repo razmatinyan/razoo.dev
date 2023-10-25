@@ -1,5 +1,5 @@
 import { H3Event } from 'h3';
-import { v2 as cloudinary } from 'cloudinary';
+import { Cloudinary } from '../../utils/cloudinary';
 import type { Images } from '@/types/images.d';
 
 export default defineEventHandler(async (event: H3Event) => {
@@ -7,11 +7,15 @@ export default defineEventHandler(async (event: H3Event) => {
 	const filename = image.filename;
 
 	try {
+		const cloudinary = new Cloudinary();
 		const cloudinaryFilename = filename.split('.')[0];
-		const result = await cloudinary.uploader.destroy(cloudinaryFilename);
+		const data = await cloudinary.deleteFile(cloudinaryFilename);
 
-		if (result.result !== 'ok') {
-			throw new Error('Error while deleting file.');
+		if (data.result !== 'ok') {
+			throw createError({
+				statusCode: 400,
+				statusMessage: 'Error while deleting file.',
+			});
 		}
 
 		return {

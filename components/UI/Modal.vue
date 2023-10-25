@@ -12,7 +12,7 @@
 			<transition
 				name="modal"
 				@before-enter="useScrollbarPadding('stop')"
-				@after-leave="useScrollbarPadding('start')"
+				@after-leave="useScrollbarPadding('start'), $emit('close')"
 			>
 				<div
 					v-show="isOpen"
@@ -88,7 +88,6 @@ export default defineComponent({
 
 		const close = (value: boolean): void => {
 			isOpen.value = value;
-			emit('close');
 		};
 
 		const useScrollbarPadding = (action: string): void => {

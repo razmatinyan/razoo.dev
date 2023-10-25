@@ -1,7 +1,7 @@
 export interface Database {
 	public: {
 		Tables: {
-			movies: {
+			project: {
 				Row: {
 					id: number;
 					name: string;

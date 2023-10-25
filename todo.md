@@ -1,1 +1,1 @@
-# Add the server middleware for /admin server route, to check if the user is logged in
+# Fix types issue with statusMessage in add.vue and add-project.post.ts files
