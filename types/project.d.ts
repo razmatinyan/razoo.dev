@@ -20,11 +20,11 @@ export interface Project {
 
 export interface ProjectAddResponse {
 	statusCode: number;
-	statusMessage?: string | Array<{}> | Record<string, any> | unknown;
-	data?: ProjectsTableSchema[];
+	statusMessage?: string;
+	data?: ProjectSchema;
 }
 
-export interface ProjectsTableSchema {
+export interface ProjectSchema {
 	title: string;
 	slug: string;
 	siteUrl: string;

@@ -188,8 +188,8 @@ const handleSubmit = async (e: Event): Promise<void> => {
 		});
 
 		if (!error.value) {
-			if (data.value?.statusCode === 400) {
-				console.log(data.value, typeof data.value.statusMessage);
+			console.log(data.value);
+			if (data.value?.statusMessage) {
 				errors.value.isError = true;
 				errors.value.reasons?.push(data.value?.statusMessage);
 			}
@@ -273,6 +273,7 @@ watch(
 .errors {
 	padding-left: 17px;
 	color: #f97b7b;
+	line-height: 1;
 }
 .error-text:not(:last-child) {
 	margin-bottom: 12px;
