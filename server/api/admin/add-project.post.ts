@@ -44,7 +44,7 @@ export default defineEventHandler(async (event: H3Event): Promise<void | Project
 		const data: ProjectSchema = { ...result[0] };
 
 		return {
-			statusCode: 200,
+			statusCode: 201,
 			data,
 		};
 	} catch (err: unknown) {

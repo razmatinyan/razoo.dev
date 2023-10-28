@@ -167,6 +167,7 @@ export default defineComponent({
 .modal-content > .buttons {
 	display: flex;
 	align-items: center;
+	justify-content: flex-end;
 	gap: 10px;
 	margin-top: 30px;
 }

@@ -1,6 +1,7 @@
 import { H3Event } from 'h3';
 import { Cloudinary } from '../../utils/cloudinary';
 import type { Images } from '@/types/images.d';
+import type { ResponseError } from '@/types/response.d';
 
 export default defineEventHandler(async (event: H3Event) => {
 	const image = await readBody<Images>(event);
@@ -24,10 +25,11 @@ export default defineEventHandler(async (event: H3Event) => {
 				filename: '',
 			} as Images,
 		};
-	} catch (err) {
+	} catch (err: unknown) {
+		const error = err as ResponseError;
 		return {
-			statusCode: 400,
-			statusMessage: 'Error while deleting file.',
+			statusCode: error.statusCode,
+			statusMessage: error.statusMessage,
 		};
 	}
 });

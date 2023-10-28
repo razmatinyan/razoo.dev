@@ -55,7 +55,7 @@ const menu: Menu[] = [
 }
 
 .menu-item {
-	--card-padding: 24px;
+	--card-padding: 35px;
 	--radius: 12px;
 	--hover-color: hsla(0, 0%, 100%, 0.02);
 	display: flex;
@@ -65,7 +65,7 @@ const menu: Menu[] = [
 	position: relative;
 	overflow: hidden;
 	border-radius: var(--radius);
-	background: #000;
+	background: var(--input-bg);
 	border: 1px solid #333;
 	transition-property: border-color, background;
 	transition-duration: 0.15s;

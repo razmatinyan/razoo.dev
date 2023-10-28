@@ -1,19 +1,26 @@
 import { H3Event } from 'h3';
 import { Cloudinary } from '../../utils/cloudinary';
 import type { Images } from '@/types/images.d';
+import type { ResponseError } from '@/types/response.d';
 
-export default defineEventHandler(async (event: H3Event) => {
+interface UploadResponse {
+	statusCode: number;
+	statusMessage?: string;
+	data?: Images;
+}
+
+export default defineEventHandler(async (event: H3Event): Promise<UploadResponse> => {
 	const body = await readBody<{ file: string }>(event);
 	const file: string = body.file;
 
-	if (!file) {
-		throw createError({
-			statusCode: 400,
-			statusMessage: 'No File provided.',
-		});
-	}
-
 	try {
+		if (!file) {
+			throw createError({
+				statusCode: 400,
+				statusMessage: 'No File provided.',
+			});
+		}
+
 		const cloudinary = new Cloudinary();
 		const uploadedFile = await cloudinary.uploadFile(file);
 		const data: Images = { filename: `${uploadedFile.public_id}.${uploadedFile.format}` };
@@ -22,10 +29,11 @@ export default defineEventHandler(async (event: H3Event) => {
 			statusCode: 200,
 			data,
 		};
-	} catch (err) {
+	} catch (err: unknown) {
+		const error = err as ResponseError;
 		return {
-			statusCode: 400,
-			statusMessage: 'Failed to upload image.',
+			statusCode: error.statusCode,
+			statusMessage: error.statusMessage,
 		};
 	}
 });

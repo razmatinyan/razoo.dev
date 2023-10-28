@@ -3,6 +3,15 @@ import { Transform } from 'stream';
 // declare module 'cloudinary' {
 /****************************** Constants *************************************/
 /****************************** Transformations *******************************/
+
+export type CloudinaryProperties = {
+	options?: UploadApiOptions;
+
+	uploadFile(file: string): Promise<UploadApiResponse>;
+
+	deleteFile(filename: string): Promise<{ result: string }>;
+};
+
 type CropMode =
 	| (string & {})
 	| 'scale'

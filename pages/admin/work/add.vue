@@ -80,10 +80,24 @@
 	<UIModal v-model="errors.isError" title="Error" @close="clearErrors">
 		<template #content>
 			<ul class="errors">
-				<li v-for="error in errors.reasons" :key="Date.now()" class="error-text">
+				<li
+					v-for="(error, index) in errors.reasons"
+					:key="`error-${index}`"
+					class="error-text"
+				>
 					{{ error }}
 				</li>
 			</ul>
+		</template>
+	</UIModal>
+
+	<UIModal v-model="uploaded" title="Success" @close="clearFormData">
+		<template #content>
+			<p class="content-text">Project is successfully uploaded.</p>
+		</template>
+
+		<template #buttons>
+			<UIButton class="border half-height" @click="uploaded = false">OK</UIButton>
 		</template>
 	</UIModal>
 </template>
@@ -141,6 +155,7 @@ const errors = ref<{ isError: boolean; reasons?: Array<string | undefined> }>({
 	isError: false,
 	reasons: [],
 });
+const uploaded = ref<boolean>(false);
 
 // Functions
 const addImageField = (): void => {
@@ -188,10 +203,11 @@ const handleSubmit = async (e: Event): Promise<void> => {
 		});
 
 		if (!error.value) {
-			console.log(data.value);
-			if (data.value?.statusMessage) {
+			if (data.value?.statusCode !== 201) {
 				errors.value.isError = true;
 				errors.value.reasons?.push(data.value?.statusMessage);
+			} else {
+				uploaded.value = true;
 			}
 		}
 	}
@@ -199,6 +215,10 @@ const handleSubmit = async (e: Event): Promise<void> => {
 
 const clearErrors = (): void => {
 	errors.value.reasons = [];
+};
+
+const clearFormData = (): void => {
+	reloadNuxtApp();
 };
 
 // Watchers

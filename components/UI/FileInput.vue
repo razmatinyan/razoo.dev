@@ -68,7 +68,7 @@ import type { Images } from '@/types/images.d';
 type UploadResult = {
 	statusCode: number;
 	data: Images;
-	message?: string;
+	statusMessage?: string;
 };
 
 export default defineComponent({
@@ -94,7 +94,7 @@ export default defineComponent({
 		const loading = ref<boolean>(false);
 		const isOpen = ref<boolean>(false);
 		const callInput = refImage.value ? ref<boolean>(false) : ref<boolean>(true);
-		const isError = reactive({
+		const isError: { open: boolean; msg: string | undefined } = reactive({
 			open: false,
 			msg: '',
 		});
@@ -154,15 +154,19 @@ export default defineComponent({
 			if (!error.value) {
 				const res = unref(data) as UploadResult;
 
-				if (res.data.filename) {
-					let emitAddOrNot = true;
-					if (refImage.value !== '') emitAddOrNot = false;
-					refImage.value = res.data.filename;
-					emit('update:modelValue', res.data.filename);
-					emit('change');
-					if (emitAddOrNot) emit('add');
+				if (res.statusCode === 200) {
+					if (res.data.filename) {
+						let emitAddOrNot = true;
+						if (refImage.value !== '') emitAddOrNot = false;
+						refImage.value = res.data.filename;
+						emit('update:modelValue', res.data.filename);
+						emit('change');
+						if (emitAddOrNot) emit('add');
+					} else {
+						handleError('No Image Recieved.');
+					}
 				} else {
-					handleError('No Image Recieved.');
+					handleError(res.statusMessage);
 				}
 			}
 
@@ -189,27 +193,31 @@ export default defineComponent({
 				if (!error.value) {
 					const res = unref(data) as UploadResult;
 
-					if (res.data.filename === '') {
-						if (emptyVals) {
-							refImage.value = '';
-							input.value!.files = new DataTransfer().files;
-							emit('update:modelValue', '');
-							return setTimeout(() => {
-								emit('delete');
-							}, 200);
-						}
+					if (res.statusCode === 200) {
+						if (res.data.filename === '') {
+							if (emptyVals) {
+								refImage.value = '';
+								input.value!.files = new DataTransfer().files;
+								emit('update:modelValue', '');
+								return setTimeout(() => {
+									emit('delete');
+								}, 200);
+							}
 
-						input.value!.files = new DataTransfer().files;
-						emit('update:modelValue', res.data.filename);
-						return emit('change');
+							input.value!.files = new DataTransfer().files;
+							emit('update:modelValue', res.data.filename);
+							return emit('change');
+						} else {
+							return handleError('Error while changing value.');
+						}
 					} else {
-						return handleError('Error while changing value.');
+						return handleError(res.statusMessage);
 					}
 				}
 			}
 		};
 
-		const handleError = (errText: string): void => {
+		const handleError = (errText: string | undefined): void => {
 			isError.msg = errText;
 			isError.open = true;
 			emit('error', errText);

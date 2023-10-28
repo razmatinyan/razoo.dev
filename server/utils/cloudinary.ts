@@ -1,5 +1,9 @@
 import { v2 as cloudinary } from 'cloudinary';
-import type { UploadApiOptions, UploadApiResponse } from '@/types/cloudinary.d';
+import type {
+	UploadApiOptions,
+	UploadApiResponse,
+	CloudinaryProperties,
+} from '@/types/cloudinary.d';
 
 const config = useRuntimeConfig();
 
@@ -11,25 +15,21 @@ cloudinary.config({
 });
 
 /**
- * Cloudinary class, for easy-to-use the cloudinary library
+ * Cloudinary class, to use cloudinary API
  */
-export class Cloudinary {
-	options?: UploadApiOptions;
-
+export class Cloudinary implements CloudinaryProperties {
 	constructor(
-		options: UploadApiOptions = {
+		public options: UploadApiOptions = {
 			overwrite: true,
 			invalidate: true,
 			resource_type: 'auto',
 		}
-	) {
-		this.options = options;
-	}
+	) {}
 
 	/**
 	 * Image upload to Cloudinary storage
 	 * @param file base64 encoded file to upload
-	 * @returns Promise<UploadApiResponse> with uploaded image information
+	 * @returns Promise with uploaded image information
 	 */
 	async uploadFile(file: string): Promise<UploadApiResponse> {
 		return await cloudinary.uploader.upload(file, this.options);
