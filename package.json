@@ -22,6 +22,6 @@
     "cloudinary": "^1.41.0",
     "gsap": "^3.12.2",
     "locomotive-scroll": "^5.0.0-beta.8",
-    "vuedraggable": "^2.24.3"
+    "vuedraggable": "^4.1.0"
   }
 }

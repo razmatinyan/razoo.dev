@@ -46,7 +46,7 @@
 							v-model="form.techStack[index].data"
 							:key="val"
 							:value="val"
-							:id="val"
+							:id="`checkbox-${val}`"
 							:label="val"
 							required
 						/>
@@ -59,7 +59,15 @@
 			<UIFileInput v-model="form.coverImage.filename" text="Add Cover Image" />
 		</div>
 		<div class="form-row">
-			<h2 class="row-title">Project Images</h2>
+			<h2 class="row-title" style="pointer-events: all">
+				Project Images
+				<Icon
+					name="heroicons:arrows-pointing-out"
+					style="margin-left: 10px; cursor: pointer"
+					@click="orders = true"
+				/>
+			</h2>
+
 			<div class="all-images">
 				<div v-for="(image, index) in form.allImages" class="image">
 					<UIFileInput
@@ -76,6 +84,33 @@
 			<Icon name="heroicons:paper-airplane-solid" />
 		</button>
 	</form>
+
+	<UIModal v-model="orders" title="Images" :width="900">
+		<template #content>
+			<transition-group>
+				<draggable
+					v-model="form.allImages"
+					key="draggable"
+					class="order-images"
+					v-bind="dragOptions"
+					@start="drag = true"
+					@end="drag = false"
+					item-key="id"
+				>
+					<template #item="{ image, index }">
+						<div v-if="form.allImages[index].filename" class="order-image">
+							<div class="image">
+								<NuxtImg
+									provider="cloudinary"
+									:src="form.allImages[index].filename"
+								/>
+							</div>
+						</div>
+					</template>
+				</draggable>
+			</transition-group>
+		</template>
+	</UIModal>
 
 	<UIModal v-model="errors.isError" title="Error" @close="clearErrors">
 		<template #content>
@@ -103,6 +138,7 @@
 </template>
 
 <script setup lang="ts">
+import draggable from 'vuedraggable';
 import type { Project, TechStack, RecordString } from '@/types/project.d';
 import '@/assets/modalTransitions.css';
 
@@ -155,7 +191,16 @@ const errors = ref<{ isError: boolean; reasons?: Array<string | undefined> }>({
 	isError: false,
 	reasons: [],
 });
+
 const uploaded = ref<boolean>(false);
+const drag = ref<boolean>(false);
+const orders = ref<boolean>(false);
+const dragOptions = ref({
+	animation: 200,
+	group: 'description',
+	disabled: false,
+	ghostClass: 'ghost',
+});
 
 // Functions
 const addImageField = (): void => {
@@ -297,5 +342,35 @@ watch(
 }
 .error-text:not(:last-child) {
 	margin-bottom: 12px;
+}
+
+.flip-list-move {
+	transition: transform 0.5s;
+}
+.order-images {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	flex-wrap: wrap;
+	grid-gap: 20px;
+}
+.order-images .order-image {
+	flex-basis: 25%;
+	padding: 10px;
+	border-radius: 5px;
+	box-shadow: var(--border-shadow);
+	overflow: hidden;
+	cursor: move;
+}
+.order-images .order-image:hover {
+	background: rgba(143, 143, 143, 0.1);
+}
+
+.order-images .order-image .image {
+	height: 100%;
+}
+.order-images .order-image img {
+	height: 100%;
+	object-fit: cover;
+	border-radius: 3px;
 }
 </style>
