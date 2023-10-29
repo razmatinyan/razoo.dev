@@ -90,12 +90,12 @@
 			<transition-group>
 				<draggable
 					v-model="form.allImages"
-					key="draggable"
-					class="order-images"
 					v-bind="dragOptions"
-					@start="drag = true"
-					@end="drag = false"
+					key="draggable"
 					item-key="id"
+					class="order-images"
+					@start="($event.item.style.opacity = 0), dragHtmlClass('add')"
+					@end="($event.item.style.opacity = 1), dragHtmlClass('remove')"
 				>
 					<template #item="{ image, index }">
 						<div v-if="form.allImages[index].filename" class="order-image">
@@ -266,6 +266,11 @@ const clearFormData = (): void => {
 	reloadNuxtApp();
 };
 
+const dragHtmlClass = (action: string): void => {
+	if (action === 'add') document.documentElement.classList.add('dragging');
+	else if (action === 'remove') document.documentElement.classList.remove('dragging');
+};
+
 // Watchers
 watch(
 	() => form.allImages,
@@ -354,7 +359,6 @@ watch(
 	grid-gap: 20px;
 }
 .order-images .order-image {
-	flex-basis: 25%;
 	padding: 10px;
 	border-radius: 5px;
 	box-shadow: var(--border-shadow);

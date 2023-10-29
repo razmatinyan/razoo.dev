@@ -117,6 +117,7 @@ onBeforeUnmount(() => {
 	transition: transform 0.2s ease;
 	mix-blend-mode: difference;
 }
+html.dragging #cursor,
 #cursor.hide {
 	transform: translate(-50%, -50%) scale(0);
 }
