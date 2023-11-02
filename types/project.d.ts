@@ -21,10 +21,15 @@ export interface Project {
 export interface ProjectAddResponse {
 	statusCode: number;
 	statusMessage?: string;
-	data?: ProjectSchema;
+	data?: ProjectSchema | ProjectSchema[];
+}
+
+export interface ProjectGetResponse extends ProjectAddResponse {
+	data: ProjectSchema | ProjectSchema[];
 }
 
 export interface ProjectSchema {
+	id: number;
 	title: string;
 	slug: string;
 	siteUrl: string;
@@ -34,5 +39,5 @@ export interface ProjectSchema {
 	techStack: RecordString;
 	coverImage: Images;
 	allImages: Images[];
-	created_at?: string;
+	created_at: string;
 }

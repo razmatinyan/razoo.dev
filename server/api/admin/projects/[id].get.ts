@@ -1,37 +1,39 @@
-import { serverSupabaseClient } from '#supabase/server';
+import { serverSupabaseClient, serverSupabaseUser } from '#supabase/server';
 import type { H3Event } from 'h3';
 import type { Database } from '@/types/database.d';
-import type { Project, ProjectAddResponse, ProjectSchema } from '@/types/project.d';
+import type { ProjectAddResponse, ProjectSchema } from '@/types/project.d';
 import type { ResponseError } from '@/types/response.d';
 import type { Images } from '@/types/images.d';
-
-type RequestEdit = {
-	slug: ProjectSchema['slug'];
-	allImages?: ProjectSchema['allImages'];
-};
 
 const parseNestedJSON = <T>(array: Array<string>): T[] => array.map((item) => JSON.parse(item));
 
 export default defineEventHandler(async (event: H3Event): Promise<void | ProjectAddResponse> => {
-	const req = await readBody<Project>(event);
-	const db = await serverSupabaseClient<Database>(event);
+	try {
+		await serverSupabaseUser(event);
+	} catch (err) {
+		return createError({
+			statusCode: 401,
+			message: 'No authorized user found.',
+		});
+	}
 
-	const editedReq: RequestEdit = {
-		slug: req.title
-			.toLowerCase()
-			.split(/[ _.]+/)
-			.join('-'),
-		allImages: req.allImages.filter((item) => item.filename !== ''),
-	};
-	Object.assign(req, editedReq);
+	const db = await serverSupabaseClient<Database>(event);
+	const id = getRouterParam(event, 'id');
 
 	try {
-		const { data: result, error } = await db.from('projects').insert(req).select();
+		const { data: result, error } = await db.from('projects').select().eq('id', id).limit(1);
 
 		if (error !== null) {
 			return createError({
 				statusCode: 400,
 				statusMessage: error.message,
+			});
+		}
+
+		if (!result.length) {
+			return createError({
+				statusCode: 400,
+				statusMessage: 'Project with this ID is not found.',
 			});
 		}
 
@@ -44,7 +46,7 @@ export default defineEventHandler(async (event: H3Event): Promise<void | Project
 		const data: ProjectSchema = { ...result[0] };
 
 		return {
-			statusCode: 201,
+			statusCode: 200,
 			data,
 		};
 	} catch (err: unknown) {

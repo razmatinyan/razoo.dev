@@ -15,7 +15,7 @@ export default defineEventHandler(async (event: H3Event): Promise<UploadResponse
 
 	try {
 		if (!file) {
-			throw createError({
+			return createError({
 				statusCode: 400,
 				statusMessage: 'No File provided.',
 			});

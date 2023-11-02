@@ -13,7 +13,7 @@ export default defineEventHandler(async (event: H3Event) => {
 		const data = await cloudinary.deleteFile(cloudinaryFilename);
 
 		if (data.result !== 'ok') {
-			throw createError({
+			return createError({
 				statusCode: 400,
 				statusMessage: 'Error while deleting file.',
 			});

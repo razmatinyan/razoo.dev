@@ -4,7 +4,7 @@
 		<div class="cursor"></div>
 	</div>
 
-	<NuxtLayout>
+	<NuxtLayout :name="layout">
 		<NuxtPage />
 	</NuxtLayout>
 </template>
@@ -13,6 +13,9 @@
 import '../locomotive-scroll/dist/locomotive-scroll.css';
 import gsap from 'gsap';
 // import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+const route = useRoute();
+const layout = computed(() => (route.path.includes('admin') ? 'admin' : 'default'));
 
 onMounted(() => {
 	gsap.config({

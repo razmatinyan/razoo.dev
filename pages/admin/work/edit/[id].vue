@@ -1,6 +1,6 @@
 <template>
-	<h1 class="section-title center">Add Work</h1>
-	<form @submit.prevent="handleSubmit" id="form" novalidate>
+	<h1 class="section-title center">Edit Work</h1>
+	<form v-if="!error" @submit.prevent="handleSubmit" id="form" novalidate>
 		<div class="form-row double-row">
 			<UIInput v-model="form.title" id="title" type="text" placeholder="Colorgen" required />
 			<UIInput
@@ -85,6 +85,8 @@
 		</button>
 	</form>
 
+	<p v-else class="pending-text">{{ error.statusMessage }}</p>
+
 	<UIModal v-model="orders" title="Images" :width="900">
 		<template #content>
 			<transition-group>
@@ -139,16 +141,27 @@
 
 <script setup lang="ts">
 import draggable from 'vuedraggable';
-import type { Project, TechStack, RecordString } from '@/types/project.d';
+import type { ProjectGetResponse, ProjectSchema, TechStack, RecordString } from '@/types/project.d';
 
 definePageMeta({
 	middleware: ['auth'],
 });
 
+const route = useRoute();
+const { data: project, error } = await useFetch(`/api/admin/projects/${route.params.id}`, {
+	transform: (project: ProjectGetResponse) => project.data as ProjectSchema,
+});
+
 // Variables
-let imgId = ref<number>(0);
-const form: Project = reactive({
+const checkImgID = computed<number>(() =>
+	project.value?.allImages ? project.value.allImages.length : 0
+);
+let imgId = ref<number>(checkImgID.value);
+
+let form: ProjectSchema = reactive({
+	id: 0,
 	title: '',
+	slug: '',
 	siteUrl: '',
 	description: '',
 	year: '',
@@ -156,7 +169,12 @@ const form: Project = reactive({
 	techStack: [{ data: [] }, { data: [] }, { data: [] }] as RecordString,
 	coverImage: { filename: '' },
 	allImages: [{ id: imgId.value++, filename: '' }],
+	created_at: '',
 });
+
+if (project.value) {
+	form = reactive({ ...project.value });
+}
 
 const madeWithOptions: Array<string> = ['Solo', 'Teamwork'];
 const techStackOptions: TechStack[] = [
@@ -185,11 +203,6 @@ const techStackOptions: TechStack[] = [
 	},
 ];
 
-const errors = ref<{ isError: boolean; reasons?: Array<string | undefined> }>({
-	isError: false,
-	reasons: [],
-});
-
 const uploaded = ref<boolean>(false);
 const orders = ref<boolean>(false);
 const dragOptions = ref({
@@ -197,6 +210,11 @@ const dragOptions = ref({
 	group: 'description',
 	disabled: false,
 	ghostClass: 'ghost',
+});
+
+const errors = ref<{ isError: boolean; reasons?: Array<string | undefined> }>({
+	isError: false,
+	reasons: [],
 });
 
 // Functions
@@ -235,8 +253,8 @@ const handleSubmit = async (e: Event): Promise<void> => {
 		errors.value.isError = true;
 		return;
 	} else {
-		const { data, error } = await useFetch('/api/admin/add-project', {
-			method: 'post',
+		const { data, error } = await useFetch(`/api/admin/projects/${route.params.id}`, {
+			method: 'put',
 			body: form,
 			onResponseError({ response }) {
 				errors.value.isError = true;
@@ -244,14 +262,14 @@ const handleSubmit = async (e: Event): Promise<void> => {
 			},
 		});
 
-		if (!error.value) {
-			if (data.value?.statusCode !== 201) {
-				errors.value.isError = true;
-				errors.value.reasons?.push(data.value?.statusMessage);
-			} else {
-				uploaded.value = true;
-			}
-		}
+		// if (!error.value) {
+		// 	if (data.value?.statusCode !== 201) {
+		// 		errors.value.isError = true;
+		// 		errors.value.reasons?.push(data.value?.statusMessage);
+		// 	} else {
+		// 		uploaded.value = true;
+		// 	}
+		// }
 	}
 };
 
@@ -268,6 +286,11 @@ const dragHtmlClass = (action: string): void => {
 	else if (action === 'remove') document.documentElement.classList.remove('dragging');
 };
 
+// onMounted
+onMounted(() => {
+	if (project.value) addImageField();
+});
+
 // Watchers
 watch(
 	() => form.allImages,
@@ -279,6 +302,12 @@ watch(
 </script>
 
 <style scoped>
+.pending-text {
+	display: block;
+	margin-top: 40px;
+	text-align: center;
+	font-size: 1rem;
+}
 #form {
 	padding: 80px 0;
 }

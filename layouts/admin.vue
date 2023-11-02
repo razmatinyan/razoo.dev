@@ -27,6 +27,7 @@
 
 <script setup lang="ts">
 import '@/assets/admin.css';
+import '@/assets/modalTransitions.css';
 
 interface Menu {
 	path: string;
@@ -42,6 +43,10 @@ const menu: Menu[] = [
 	{
 		path: '/admin/work/add',
 		text: 'Add',
+	},
+	{
+		path: '/admin/work/edit',
+		text: 'Edit',
 	},
 	{
 		path: '/',

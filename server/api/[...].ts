@@ -5,7 +5,7 @@ export default defineEventHandler(async (event: H3Event) => {
 	try {
 		await serverSupabaseUser(event);
 	} catch (err) {
-		throw createError({
+		return createError({
 			statusCode: 401,
 			message: 'No authorized user found.',
 		});
