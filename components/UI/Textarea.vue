@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import type { TextareaType } from '@/types/form.d';
+import type { TextareaType } from '~/types/form.d';
 
 defineProps<TextareaType>();
 const emit = defineEmits(['update:modelValue']);

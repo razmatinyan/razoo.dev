@@ -1,9 +1,12 @@
 import { H3Event } from 'h3';
 import { Cloudinary } from '../../utils/cloudinary';
-import type { Images } from '@/types/images.d';
-import type { ResponseError } from '@/types/response.d';
+import { protect } from '~/server/utils/protect';
+import type { Images } from '~/types/images.d';
+import type { ResponseError } from '~/types/response.d';
 
 export default defineEventHandler(async (event: H3Event) => {
+	await protect(event);
+
 	const image = await readBody<Images>(event);
 	const filename = image.filename;
 

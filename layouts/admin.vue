@@ -26,8 +26,8 @@
 </template>
 
 <script setup lang="ts">
-import '@/assets/admin.css';
-import '@/assets/modalTransitions.css';
+import '~/assets/admin.css';
+import '~/assets/modalTransitions.css';
 
 interface Menu {
 	path: string;

@@ -1,19 +1,29 @@
 import { serverSupabaseClient } from '#supabase/server';
+import { protect } from '~/server/utils/protect';
+import { parseNestedJSON } from '~/server/utils/parseNestedJSON';
 import type { H3Event } from 'h3';
-import type { Database } from '@/types/database.d';
-import type { Project, ProjectAddResponse, ProjectSchema } from '@/types/project.d';
-import type { ResponseError } from '@/types/response.d';
-import type { Images } from '@/types/images.d';
+import type { Database } from '~/types/database.d';
+import type { Project, ProjectAddResponse, ProjectSchema } from '~/types/project.d';
+import type { ResponseError } from '~/types/response.d';
+import type { Images } from '~/types/images.d';
 
 type RequestEdit = {
 	slug: ProjectSchema['slug'];
 	allImages?: ProjectSchema['allImages'];
 };
 
-const parseNestedJSON = <T>(array: Array<string>): T[] => array.map((item) => JSON.parse(item));
+export default defineEventHandler(async (event: H3Event): Promise<ProjectAddResponse> => {
+	await protect(event);
 
-export default defineEventHandler(async (event: H3Event): Promise<void | ProjectAddResponse> => {
 	const req = await readBody<Project>(event);
+
+	if (!req) {
+		return createError({
+			statusCode: 400,
+			statusMessage: 'No data provided.',
+		});
+	}
+
 	const db = await serverSupabaseClient<Database>(event);
 
 	const editedReq: RequestEdit = {

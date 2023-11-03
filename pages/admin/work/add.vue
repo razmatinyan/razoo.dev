@@ -73,8 +73,8 @@
 					<UIFileInput
 						:key="image.id"
 						v-model="form.allImages[index].filename"
-						@add="addImageField"
-						@delete="deleteImageField(index)"
+						@add="addImageField(form)"
+						@delete="deleteImageField(form, index)"
 					/>
 				</div>
 			</div>
@@ -139,80 +139,33 @@
 
 <script setup lang="ts">
 import draggable from 'vuedraggable';
-import type { Project, TechStack, RecordString } from '@/types/project.d';
+import type { Project, TechStack, ProjectAddResponse } from '~/types/project.d';
+import {
+	formOptions,
+	madeWithOptions,
+	techStackOptions,
+	dragOptions,
+	uploaded,
+	orders,
+	addImageField,
+	deleteImageField,
+	isUrl,
+	clearFormData,
+	dragHtmlClass,
+} from '~/helpers/project.config';
 
 definePageMeta({
 	middleware: ['auth'],
 });
 
 // Variables
-let imgId = ref<number>(0);
-const form: Project = reactive({
-	title: '',
-	siteUrl: '',
-	description: '',
-	year: '',
-	madeWith: '',
-	techStack: [{ data: [] }, { data: [] }, { data: [] }] as RecordString,
-	coverImage: { filename: '' },
-	allImages: [{ id: imgId.value++, filename: '' }],
-});
-
-const madeWithOptions: Array<string> = ['Solo', 'Teamwork'];
-const techStackOptions: TechStack[] = [
-	{
-		type: 'Frontend',
-		values: [
-			'HTML',
-			'Javascript',
-			'Typescript',
-			'jQuery',
-			'Vue',
-			'Nuxt/Vue',
-			'THREE.js',
-			'CSS',
-			'SCSS',
-			'Tailwind CSS',
-		],
-	},
-	{
-		type: 'Backend',
-		values: ['Nuxt', 'Node.js', 'PHP'],
-	},
-	{
-		type: 'Database',
-		values: ['MySQL', 'MongoDB', 'Supabase', 'GraphQL', 'Apollo'],
-	},
-];
-
+const form: Project = reactive({ ...formOptions });
 const errors = ref<{ isError: boolean; reasons?: Array<string | undefined> }>({
 	isError: false,
 	reasons: [],
 });
 
-const uploaded = ref<boolean>(false);
-const orders = ref<boolean>(false);
-const dragOptions = ref({
-	animation: 200,
-	group: 'description',
-	disabled: false,
-	ghostClass: 'ghost',
-});
-
 // Functions
-const addImageField = (): void => {
-	form.allImages.push({ id: imgId.value++, filename: '' });
-};
-
-const deleteImageField = (index: number): void => {
-	form.allImages.splice(index, 1);
-};
-
-const isUrl = (url: string): boolean => {
-	const urlRegex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
-	return urlRegex.test(url);
-};
-
 const handleSubmit = async (e: Event): Promise<void> => {
 	if (form.title.length < 3)
 		errors.value.reasons?.push('Title length must be longer than 3 characters');
@@ -242,6 +195,7 @@ const handleSubmit = async (e: Event): Promise<void> => {
 				errors.value.isError = true;
 				errors.value.reasons?.push(response._data.statusMessage);
 			},
+			transform: (data: ProjectAddResponse) => data,
 		});
 
 		if (!error.value) {
@@ -259,20 +213,11 @@ const clearErrors = (): void => {
 	errors.value.reasons = [];
 };
 
-const clearFormData = (): void => {
-	reloadNuxtApp();
-};
-
-const dragHtmlClass = (action: string): void => {
-	if (action === 'add') document.documentElement.classList.add('dragging');
-	else if (action === 'remove') document.documentElement.classList.remove('dragging');
-};
-
 // Watchers
 watch(
 	() => form.allImages,
 	(newVal) => {
-		if (!newVal.length) addImageField();
+		if (!newVal.length) addImageField(form);
 	},
 	{ deep: true }
 );

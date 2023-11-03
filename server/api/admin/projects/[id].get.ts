@@ -1,21 +1,14 @@
-import { serverSupabaseClient, serverSupabaseUser } from '#supabase/server';
+import { serverSupabaseClient } from '#supabase/server';
+import { protect } from '~/server/utils/protect';
+import { parseNestedJSON } from '~/server/utils/parseNestedJSON';
 import type { H3Event } from 'h3';
-import type { Database } from '@/types/database.d';
-import type { ProjectAddResponse, ProjectSchema } from '@/types/project.d';
-import type { ResponseError } from '@/types/response.d';
-import type { Images } from '@/types/images.d';
+import type { Database } from '~/types/database.d';
+import type { ProjectAddResponse, ProjectSchema } from '~/types/project.d';
+import type { ResponseError } from '~/types/response.d';
+import type { Images } from '~/types/images.d';
 
-const parseNestedJSON = <T>(array: Array<string>): T[] => array.map((item) => JSON.parse(item));
-
-export default defineEventHandler(async (event: H3Event): Promise<void | ProjectAddResponse> => {
-	try {
-		await serverSupabaseUser(event);
-	} catch (err) {
-		return createError({
-			statusCode: 401,
-			message: 'No authorized user found.',
-		});
-	}
+export default defineEventHandler(async (event: H3Event): Promise<ProjectAddResponse> => {
+	await protect(event);
 
 	const db = await serverSupabaseClient<Database>(event);
 	const id = getRouterParam(event, 'id');

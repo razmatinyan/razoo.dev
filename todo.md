@@ -1,5 +1,4 @@
-# Refactor: move the data transformation of result in add-project.ts to normalizeData function/util
+# TODO
 
-## Handle data update on [id].put.ts server route
-
-### Issue: Delete images if project is not uploaded
+`Refactor: Move project add/edit handling to project.config and make errors global`
+`Issue: Delete images if project is not uploaded`

@@ -1,7 +1,8 @@
 import { H3Event } from 'h3';
 import { Cloudinary } from '../../utils/cloudinary';
-import type { Images } from '@/types/images.d';
-import type { ResponseError } from '@/types/response.d';
+import { protect } from '~/server/utils/protect';
+import type { Images } from '~/types/images.d';
+import type { ResponseError } from '~/types/response.d';
 
 interface UploadResponse {
 	statusCode: number;
@@ -10,6 +11,8 @@ interface UploadResponse {
 }
 
 export default defineEventHandler(async (event: H3Event): Promise<UploadResponse> => {
+	await protect(event);
+
 	const body = await readBody<{ file: string }>(event);
 	const file: string = body.file;
 

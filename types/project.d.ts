@@ -29,7 +29,7 @@ export interface ProjectGetResponse extends ProjectAddResponse {
 }
 
 export interface ProjectSchema {
-	id: number;
+	id?: number;
 	title: string;
 	slug: string;
 	siteUrl: string;

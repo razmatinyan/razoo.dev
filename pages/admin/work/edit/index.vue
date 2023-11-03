@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ProjectSchema, ProjectAddResponse } from '@/types/project.d';
+import type { ProjectSchema, ProjectAddResponse } from '~/types/project.d';
 
 definePageMeta({
 	middleware: ['auth'],

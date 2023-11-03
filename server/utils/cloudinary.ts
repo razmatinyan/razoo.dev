@@ -3,7 +3,7 @@ import type {
 	UploadApiOptions,
 	UploadApiResponse,
 	CloudinaryProperties,
-} from '@/types/cloudinary.d';
+} from '~/types/cloudinary.d';
 
 const config = useRuntimeConfig();
 

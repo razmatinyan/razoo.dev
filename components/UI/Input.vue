@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import type { InputType } from '@/types/form.d';
+import type { InputType } from '~/types/form.d';
 
 defineProps<InputType>();
 const emit = defineEmits(['update:modelValue']);

@@ -39,7 +39,7 @@
 				</div>
 			</div>
 			<div class="img">
-				<NuxtPicture provider="cloudinary" :src="refImage" />
+				<NuxtImg provider="cloudinary" :src="refImage" />
 			</div>
 		</div>
 
@@ -63,7 +63,7 @@
 </template>
 
 <script lang="ts">
-import type { Images } from '@/types/images.d';
+import type { Images } from '~/types/images.d';
 
 type UploadResult = {
 	statusCode: number;

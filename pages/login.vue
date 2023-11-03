@@ -34,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import '@/assets/admin.css';
+import '~/assets/admin.css';
 
 definePageMeta({
 	middleware: ['auth'],
