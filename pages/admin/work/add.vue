@@ -97,7 +97,7 @@
 					@start="($event.item.style.opacity = 0), dragHtmlClass('add')"
 					@end="($event.item.style.opacity = 1), dragHtmlClass('remove')"
 				>
-					<template #item="{ image, index }">
+					<template #item="{ _, index }">
 						<div v-if="form.allImages[index].filename" class="order-image">
 							<div class="image">
 								<NuxtImg
@@ -109,20 +109,6 @@
 					</template>
 				</draggable>
 			</transition-group>
-		</template>
-	</UIModal>
-
-	<UIModal v-model="errors.isError" title="Error" @close="clearErrors">
-		<template #content>
-			<ul class="errors">
-				<li
-					v-for="(error, index) in errors.reasons"
-					:key="`error-${index}`"
-					class="error-text"
-				>
-					{{ error }}
-				</li>
-			</ul>
 		</template>
 	</UIModal>
 
@@ -138,6 +124,7 @@
 </template>
 
 <script setup lang="ts">
+import '~/assets/add-page.css';
 import draggable from 'vuedraggable';
 import type { Project, TechStack, ProjectAddResponse } from '~/types/project.d';
 import {
@@ -147,9 +134,9 @@ import {
 	dragOptions,
 	uploaded,
 	orders,
+	checkProjectData,
 	addImageField,
 	deleteImageField,
-	isUrl,
 	clearFormData,
 	dragHtmlClass,
 } from '~/helpers/project.config';
@@ -160,57 +147,32 @@ definePageMeta({
 
 // Variables
 const form: Project = reactive({ ...formOptions });
-const errors = ref<{ isError: boolean; reasons?: Array<string | undefined> }>({
-	isError: false,
-	reasons: [],
-});
+const errors = useModalError();
 
 // Functions
 const handleSubmit = async (e: Event): Promise<void> => {
-	if (form.title.length < 3)
-		errors.value.reasons?.push('Title length must be longer than 3 characters');
+	checkProjectData(form, errors);
 
-	if (!isUrl(form.siteUrl)) errors.value.reasons?.push('Site URL is not valid');
-
-	let isStackEmpty: number = 0;
-	for (const stack in form.techStack) {
-		if (form.techStack[stack].data.length === 0) isStackEmpty++;
-	}
-
-	if (isStackEmpty === form.techStack.length)
-		errors.value.reasons?.push('Tech Stack must be chosen');
-
-	if (form.coverImage.filename === '') errors.value.reasons?.push('Cover Image must be uploaded');
-	if (form.allImages.length === 1 && form.allImages[0].filename === '')
-		errors.value.reasons?.push('Project Images must be uploaded and more than 1 Image');
-
-	if (errors.value.reasons?.length) {
-		errors.value.isError = true;
+	if (errors.errors.value.reasons?.length) {
 		return;
 	} else {
 		const { data, error } = await useFetch('/api/admin/add-project', {
 			method: 'post',
 			body: form,
 			onResponseError({ response }) {
-				errors.value.isError = true;
-				errors.value.reasons?.push(response._data.statusMessage);
+				errors.add(response._data.statusMessage);
 			},
 			transform: (data: ProjectAddResponse) => data,
 		});
 
 		if (!error.value) {
 			if (data.value?.statusCode !== 201) {
-				errors.value.isError = true;
-				errors.value.reasons?.push(data.value?.statusMessage);
+				errors.add(data.value?.statusMessage);
 			} else {
 				uploaded.value = true;
 			}
 		}
 	}
-};
-
-const clearErrors = (): void => {
-	errors.value.reasons = [];
 };
 
 // Watchers
@@ -223,100 +185,4 @@ watch(
 );
 </script>
 
-<style scoped>
-#form {
-	padding: 80px 0;
-}
-.form-row {
-	margin-bottom: 20px;
-}
-.form-row.double-row {
-	display: flex;
-	align-items: center;
-	gap: 20px;
-}
-.row-title {
-	margin: 30px 0;
-	font-size: 1.9rem;
-}
-.columns {
-	display: grid;
-	grid-gap: 30px;
-}
-.columns-3 {
-	grid-template-columns: repeat(3, 1fr);
-}
-.column .column-title {
-	display: block;
-	margin-bottom: 12px;
-	font-size: 1.3rem;
-}
-.column .column-options {
-	display: flex;
-	flex-direction: column;
-}
-.checkbox-wrapper:not(:last-child) {
-	margin-bottom: 10px;
-}
-.image:not(:last-child) {
-	margin-bottom: 30px;
-}
-
-.add-btn {
-	--btn-size: 2em;
-	position: fixed;
-	bottom: 20px;
-	right: 20px;
-	width: var(--btn-size);
-	height: var(--btn-size);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-size: 2.5rem;
-	border-radius: 50%;
-	background: var(--primary);
-	transition: var(--smooth);
-	cursor: pointer;
-}
-.add-btn:hover {
-	background: var(--primary-hover);
-}
-
-.errors {
-	padding-left: 17px;
-	color: #f97b7b;
-	line-height: 1;
-}
-.error-text:not(:last-child) {
-	margin-bottom: 12px;
-}
-
-.flip-list-move {
-	transition: transform 0.5s;
-}
-.order-images {
-	display: grid;
-	grid-template-columns: repeat(4, 1fr);
-	flex-wrap: wrap;
-	grid-gap: 20px;
-}
-.order-images .order-image {
-	padding: 10px;
-	border-radius: 5px;
-	box-shadow: var(--border-shadow);
-	overflow: hidden;
-	cursor: move;
-}
-.order-images .order-image:hover {
-	background: rgba(143, 143, 143, 0.1);
-}
-
-.order-images .order-image .image {
-	height: 100%;
-}
-.order-images .order-image img {
-	height: 100%;
-	object-fit: cover;
-	border-radius: 3px;
-}
-</style>
+<style scoped></style>

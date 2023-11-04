@@ -18,6 +18,12 @@ export interface Project {
 	allImages: Images[];
 }
 
+export interface ProjectSchema extends Project {
+	id?: number;
+	slug: string;
+	created_at: string;
+}
+
 export interface ProjectAddResponse {
 	statusCode: number;
 	statusMessage?: string;
@@ -26,18 +32,4 @@ export interface ProjectAddResponse {
 
 export interface ProjectGetResponse extends ProjectAddResponse {
 	data: ProjectSchema | ProjectSchema[];
-}
-
-export interface ProjectSchema {
-	id?: number;
-	title: string;
-	slug: string;
-	siteUrl: string;
-	description?: string;
-	year?: string | number;
-	madeWith?: string;
-	techStack: RecordString;
-	coverImage: Images;
-	allImages: Images[];
-	created_at: string;
 }

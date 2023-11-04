@@ -1,7 +1,6 @@
 :root {
     --border-shadow: inset 0 0 0 1px rgba(55 65 81 / 1);
-}
-
+}	
 .ui {
 	position: relative;
 	display: block;

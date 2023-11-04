@@ -3,6 +3,20 @@
 		<Loading v-if="loading" />
 	</transition>
 
+	<UIModal v-model="errors.errors.value.isError" title="Error" @close="errors.empty">
+		<template #content>
+			<ul class="errors">
+				<li
+					v-for="(error, index) in errors.errors.value.reasons"
+					:key="`error-${index}`"
+					class="error-text"
+				>
+					{{ error }}
+				</li>
+			</ul>
+		</template>
+	</UIModal>
+
 	<div id="__layout">
 		<header id="header">
 			<div class="icon-wrapper">
@@ -60,6 +74,7 @@ const logOut = async (): Promise<void> => {
 	await client.auth.signOut();
 };
 const loading: Ref = ref<boolean>(true);
+const errors = useModalError();
 
 watchEffect(() => {
 	if (!user.value) navigateTo('/login');
@@ -145,5 +160,14 @@ onMounted(() => {
 .loader-leave-to {
 	opacity: 0;
 	visibility: hidden;
+}
+
+.errors {
+	padding-left: 17px;
+	color: #f97b7b;
+	line-height: 1;
+}
+.error-text:not(:last-child) {
+	margin-bottom: 12px;
 }
 </style>
