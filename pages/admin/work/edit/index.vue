@@ -6,7 +6,7 @@
 	<section v-else-if="projects" id="edit" class="content projects">
 		<div v-for="project in projects" :key="project.id" class="row-project">
 			<div class="project">
-				<div class="image">
+				<div class="project-image">
 					<NuxtImg
 						provider="cloudinary"
 						format="webp"
@@ -93,13 +93,13 @@ const formatDate = (date: string): string => {
 .project {
 	display: flex;
 }
-.image {
+.project-image {
 	min-height: 113px;
 	border-radius: 4px;
 	filter: drop-shadow(2px 2px 8px rgba(0, 0, 0, 0.7));
 	overflow: hidden;
 }
-.image {
+.project-image {
 	object-fit: cover;
 }
 .info {

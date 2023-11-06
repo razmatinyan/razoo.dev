@@ -35,11 +35,6 @@ const menu: Menu[] = [
 		text: 'Edit',
 		icon: 'pencil-square-20-solid',
 	},
-	{
-		path: '/admin/work/order',
-		text: 'Order',
-		icon: 'arrows-up-down-20-solid',
-	},
 ];
 </script>
 

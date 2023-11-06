@@ -39,10 +39,15 @@ export default defineNuxtConfig({
 	css: ['~/assets/fonts.css', '~/assets/main.css'],
 	modules: ['@nuxtjs/google-fonts', 'nuxt-icon', '@nuxt/image', '@nuxtjs/supabase'],
 	image: {
-		dir: 'public/storage/',
+		dir: 'public/',
 		format: ['webp'],
 		cloudinary: {
 			baseURL: `https://res.cloudinary.com/${process.env.CLOUD_NAME}/image/upload/`,
+		},
+	},
+	routeRules: {
+		'/api/**': {
+			cors: true,
 		},
 	},
 	supabase: {
